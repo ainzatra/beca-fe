@@ -24,9 +24,9 @@ const items = [
     iconColor: 'text-[#1E90FF]', // Dodger Blue
   },
   {
-    title: 'Surveys',
-    url: '/surveys',
-    isAdminOnly: false,
+    title: 'Campaigns',
+    url: '/campaigns',
+    isAdminOnly: true,
     icon: FileText,
     iconColor: 'text-[#28A745]', // Green
   },

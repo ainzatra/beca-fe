@@ -13,7 +13,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CampaignsIndexRouteImport } from './routes/campaigns/index'
 import { Route as SurveySurveyIdRouteImport } from './routes/survey/$surveyId'
+import { Route as CampaignsCampaignIdIndexRouteImport } from './routes/campaigns/$campaignId/index'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -35,11 +37,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaignsIndexRoute = CampaignsIndexRouteImport.update({
+  id: '/campaigns/',
+  path: '/campaigns/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SurveySurveyIdRoute = SurveySurveyIdRouteImport.update({
   id: '/survey/$surveyId',
   path: '/survey/$surveyId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaignsCampaignIdIndexRoute =
+  CampaignsCampaignIdIndexRouteImport.update({
+    id: '/campaigns/$campaignId/',
+    path: '/campaigns/$campaignId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +60,8 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
+  '/campaigns': typeof CampaignsIndexRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +69,8 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
+  '/campaigns': typeof CampaignsIndexRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +79,8 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
+  '/campaigns/': typeof CampaignsIndexRoute
+  '/campaigns/$campaignId/': typeof CampaignsCampaignIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,8 +90,17 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/survey/$surveyId'
+    | '/campaigns'
+    | '/campaigns/$campaignId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/forgot-password' | '/login' | '/survey/$surveyId'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/login'
+    | '/survey/$surveyId'
+    | '/campaigns'
+    | '/campaigns/$campaignId'
   id:
     | '__root__'
     | '/'
@@ -80,6 +108,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/survey/$surveyId'
+    | '/campaigns/'
+    | '/campaigns/$campaignId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +118,8 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
+  CampaignsIndexRoute: typeof CampaignsIndexRoute
+  CampaignsCampaignIdIndexRoute: typeof CampaignsCampaignIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -120,11 +152,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campaigns/': {
+      id: '/campaigns/'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof CampaignsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/survey/$surveyId': {
       id: '/survey/$surveyId'
       path: '/survey/$surveyId'
       fullPath: '/survey/$surveyId'
       preLoaderRoute: typeof SurveySurveyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campaigns/$campaignId/': {
+      id: '/campaigns/$campaignId/'
+      path: '/campaigns/$campaignId'
+      fullPath: '/campaigns/$campaignId'
+      preLoaderRoute: typeof CampaignsCampaignIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -136,6 +182,8 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   SurveySurveyIdRoute: SurveySurveyIdRoute,
+  CampaignsIndexRoute: CampaignsIndexRoute,
+  CampaignsCampaignIdIndexRoute: CampaignsCampaignIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
