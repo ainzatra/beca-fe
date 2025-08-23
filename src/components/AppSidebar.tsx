@@ -58,11 +58,11 @@ export function AppSidebar() {
   const state = useRouterState();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user.username) {
-      navigate({ to: '/' });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (!user.username) {
+  //     navigate({ to: '/' });
+  //   }
+  // }, [user]);
 
   const logoutUser = () => {
     setUser({

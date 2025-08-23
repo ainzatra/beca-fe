@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 export default function PrescriptivePanel() {
   return (
     <div className="w-full bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 rounded-xl p-6 text-white shadow-lg">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col md:flex-row items-start justify-between gap-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold">🔮 Prescriptive Analysis</h3>
           <p className="text-sm mt-1 text-white/90">
@@ -38,7 +38,7 @@ export default function PrescriptivePanel() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-row md:flex-col flex-wrap gap-3">
           <Button
             variant="default"
             className="bg-gradient-to-r from-indigo-700 to-emerald-500 text-white"
