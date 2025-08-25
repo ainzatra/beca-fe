@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,17 +8,53 @@ import SurveyPreview from '@/components/SurveyPreview';
 import type { Question, QuestionType } from '@/utils/surveyUtils';
 import { uid } from '@/utils/surveyUtils';
 import { Card } from '@/components/ui/card';
+import { Plus, Save } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SurveyBuilderProps {
   questions: Question[];
   setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
 }
+
+// Query instead
+const surveys = [
+  {
+    id: '1',
+    title: 'Survey 1',
+    form: '{json stringified here}',
+  },
+  {
+    id: '2',
+    title: 'Survey 2',
+    form: '{json stringified here}',
+  },
+  {
+    id: '3',
+    title: 'Survey 3',
+    form: '{json stringified here}',
+  },
+];
+
 export default function SurveyBuilderPage({
   questions,
   setQuestions,
 }: SurveyBuilderProps) {
   const [surveyTitle, setSurveyTitle] = useState<string>('Pre-Campaign Survey');
   const [defaultInfo, setDefaultInfo] = useState<Record<string, string>>({});
+  const [survey, setSurvey] = useState('');
+
+  // Set first survey as the default survey to display
+  useEffect(() => {
+    if (surveys) {
+      setSurvey(surveys[0].id);
+    }
+  }, []);
 
   const addQuestion = (type: QuestionType = 'text') => {
     const q: Question = {
@@ -68,26 +104,51 @@ export default function SurveyBuilderPage({
   };
 
   return (
-    <div className="mx-auto p-4">
+    <div className="mx-auto">
       <div className="flex flex-col lg:flex-row gap-6">
         <Card className="flex-1 p-4">
           <div className="mb-4">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              <div className="col-span-2">
                 <h1 className="text-2xl font-bold">Survey Builder</h1>
                 <p className="text-sm text-muted-foreground">
                   Create and edit survey for a campaign phase
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={saveSurvey}
-                  variant="default"
-                  className="cursor-pointer"
-                >
-                  Save Survey
-                </Button>
+              <div className="flex flex-wrap items-start md:items-center gap-2">
+                <div className="w-full">
+                  <Select value={survey} onValueChange={(s) => setSurvey(s)}>
+                    <SelectTrigger className="cursor-pointer w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {surveys.map((s) => (
+                        <SelectItem value={s.id} className="cursor-pointer">
+                          {s.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex w-full flex-wrap gap-2">
+                  <Button
+                    onClick={() => alert('Add New Survey')}
+                    variant="secondary"
+                    className="cursor-pointer flex-1"
+                  >
+                    <Plus />
+                    Add Survey
+                  </Button>
+                  <Button
+                    onClick={saveSurvey}
+                    variant="default"
+                    className="cursor-pointer flex-1"
+                  >
+                    <Save />
+                    Save Survey
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -113,6 +174,7 @@ export default function SurveyBuilderPage({
                 onClick={() => addQuestion()}
                 className="cursor-pointer"
               >
+                <Plus />
                 Add Question
               </Button>
             </div>
@@ -139,6 +201,7 @@ export default function SurveyBuilderPage({
                   variant="secondary"
                   className="cursor-pointer"
                 >
+                  <Plus />
                   Add Question
                 </Button>
               </div>

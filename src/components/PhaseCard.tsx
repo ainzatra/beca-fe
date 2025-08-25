@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   Card,
   CardHeader,
@@ -7,25 +6,23 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 
 export type PhaseStatus = 'draft' | 'active' | 'completed';
 
-export default function PhaseCard({
-  campaignId,
-  phaseId,
-  title,
-  status,
-  responses,
-}: {
-  campaignId: string;
-  phaseId: string;
+interface PhaseCardProps {
   title: string;
   status: PhaseStatus;
   responses: number;
-}) {
+  phase: string;
+}
+export default function PhaseCard({
+  title,
+  status,
+  responses,
+  phase,
+}: PhaseCardProps) {
   const statusColor =
     status === 'active'
       ? 'bg-emerald-100 text-emerald-800'
@@ -65,11 +62,7 @@ export default function PhaseCard({
       </CardContent>
 
       <CardFooter className="flex gap-2 flex-wrap">
-        <Link
-          to="/campaigns/$campaignId/phases/$phaseId/survey"
-          params={{ phaseId, campaignId }}
-          className="inline-block"
-        >
+        <Link to="$phase/survey" params={{ phase }} className="inline-block">
           <Button size="sm" variant="outline">
             Edit Survey
           </Button>
