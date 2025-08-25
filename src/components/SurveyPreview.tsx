@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Card,
   CardHeader,
@@ -8,16 +7,19 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import type { Question } from '@/utils/surveyUtils';
+import { Badge } from '@/components/ui/badge';
+
+type SurveyPreviewProps = {
+  title: string;
+  defaultInfo: Record<string, string>;
+  questions: Question[];
+};
 
 export default function SurveyPreview({
   title,
   defaultInfo,
   questions,
-}: {
-  title: string;
-  defaultInfo: Record<string, string>;
-  questions: Question[];
-}) {
+}: SurveyPreviewProps) {
   return (
     <Card className="sticky top-4">
       <CardHeader>
@@ -49,13 +51,11 @@ export default function SurveyPreview({
         <div className="space-y-4">
           {questions.map((q) => (
             <div key={q.id} className="p-3 border rounded-md bg-background">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">
+              <div className="flex items-start gap-2 justify-between">
+                <div className="font-medium text-wrap">
                   {q.title || 'Untitled question'}
                 </div>
-                {q.required && (
-                  <div className="text-xs text-destructive">Required</div>
-                )}
+                {q.required && <Badge variant="destructive">Required</Badge>}
               </div>
 
               <div className="mt-2">

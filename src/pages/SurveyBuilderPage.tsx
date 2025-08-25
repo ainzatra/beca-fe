@@ -105,8 +105,8 @@ export default function SurveyBuilderPage({
 
   return (
     <div className="mx-auto">
-      <div className="flex flex-col lg:flex-row gap-6">
-        <Card className="flex-1 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="col-span-2 p-4">
           <div className="mb-4">
             <div className="grid grid-cols-1 md:grid-cols-3">
               <div className="col-span-2">

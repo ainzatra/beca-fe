@@ -35,7 +35,7 @@ export default function QuestionBlock({
     <Card className="mb-3">
       <CardHeader>
         <div className="flex flex-col lg:flex-row justify-center lg:items-center items-start lg:justify-between w-full gap-4">
-          <div className="flex-1 min-w-0">
+          <div className="w-full">
             <CardTitle className="flex items-center gap-2 min-w-0">
               <span className="text-sm font-medium flex-none">
                 {index + 1}.
