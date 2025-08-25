@@ -175,7 +175,11 @@ export default function CampaignManagementSheet({ campaign }: Props) {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="right" className="w-full sm:max-w-md">
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-md"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <SheetHeader>
             <SheetTitle>Manage Campaign</SheetTitle>
           </SheetHeader>

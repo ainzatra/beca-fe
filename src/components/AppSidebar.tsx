@@ -38,8 +38,8 @@ const items = [
     iconColor: 'text-[#6F42C1]', // Purple
   },
   {
-    title: 'Reponses',
-    url: '/reponses',
+    title: 'Responses',
+    url: '/responses',
     isAdminOnly: false,
     icon: MessageSquare,
     iconColor: 'text-[#FFA500]', // Orange
@@ -92,7 +92,7 @@ export function AppSidebar() {
                 state.location.pathname === item.url ||
                 state.location.pathname.startsWith(item.url + '/');
               // hide admin-only items if user is not admin
-              if (item.isAdminOnly && user.role !== 'admin') return null;
+              // if (item.isAdminOnly && user.role !== 'admin') return null;
 
               return (
                 <SidebarMenuItem key={item.title}>
@@ -100,7 +100,7 @@ export function AppSidebar() {
                     asChild
                     className={`hover:shadow-md transition-all duration-200 ${
                       isActive
-                        ? 'bg-primary text-white shadow-lg transform scale-[1.02] hover:bg-primary-hover'
+                        ? 'bg-primary text-white shadow-lg transform scale-[1.02] hover:bg-primary/90 hover:text-white hover:shadow-2xl'
                         : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-100'
                     }`}
                   >

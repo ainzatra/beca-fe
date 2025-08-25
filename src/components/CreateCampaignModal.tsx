@@ -56,7 +56,11 @@ export default function CreateCampaignModal({
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="max-w-md">
+      <SheetContent
+        side="right"
+        className="max-w-md"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <SheetHeader>
           <SheetTitle>Create Campaign</SheetTitle>
           <SheetDescription>

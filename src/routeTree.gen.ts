@@ -16,7 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CampaignsIndexRouteImport } from './routes/campaigns/index'
 import { Route as SurveySurveyIdRouteImport } from './routes/survey/$surveyId'
 import { Route as CampaignsCampaignIdIndexRouteImport } from './routes/campaigns/$campaignId/index'
-import { Route as CampaignsCampaignIdPhasesPhaseIdSurveyRouteImport } from './routes/campaigns/$campaignId/phases/$phaseId/survey'
+import { Route as CampaignsCampaignIdPhaseSurveyRouteImport } from './routes/campaigns/$campaignId/$phase/survey'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -54,10 +54,10 @@ const CampaignsCampaignIdIndexRoute =
     path: '/campaigns/$campaignId/',
     getParentRoute: () => rootRouteImport,
   } as any)
-const CampaignsCampaignIdPhasesPhaseIdSurveyRoute =
-  CampaignsCampaignIdPhasesPhaseIdSurveyRouteImport.update({
-    id: '/campaigns/$campaignId/phases/$phaseId/survey',
-    path: '/campaigns/$campaignId/phases/$phaseId/survey',
+const CampaignsCampaignIdPhaseSurveyRoute =
+  CampaignsCampaignIdPhaseSurveyRouteImport.update({
+    id: '/campaigns/$campaignId/$phase/survey',
+    path: '/campaigns/$campaignId/$phase/survey',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -69,7 +69,7 @@ export interface FileRoutesByFullPath {
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
   '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
-  '/campaigns/$campaignId/phases/$phaseId/survey': typeof CampaignsCampaignIdPhasesPhaseIdSurveyRoute
+  '/campaigns/$campaignId/$phase/survey': typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -79,7 +79,7 @@ export interface FileRoutesByTo {
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
   '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
-  '/campaigns/$campaignId/phases/$phaseId/survey': typeof CampaignsCampaignIdPhasesPhaseIdSurveyRoute
+  '/campaigns/$campaignId/$phase/survey': typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -90,7 +90,7 @@ export interface FileRoutesById {
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns/': typeof CampaignsIndexRoute
   '/campaigns/$campaignId/': typeof CampaignsCampaignIdIndexRoute
-  '/campaigns/$campaignId/phases/$phaseId/survey': typeof CampaignsCampaignIdPhasesPhaseIdSurveyRoute
+  '/campaigns/$campaignId/$phase/survey': typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -102,7 +102,7 @@ export interface FileRouteTypes {
     | '/survey/$surveyId'
     | '/campaigns'
     | '/campaigns/$campaignId'
-    | '/campaigns/$campaignId/phases/$phaseId/survey'
+    | '/campaigns/$campaignId/$phase/survey'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -112,7 +112,7 @@ export interface FileRouteTypes {
     | '/survey/$surveyId'
     | '/campaigns'
     | '/campaigns/$campaignId'
-    | '/campaigns/$campaignId/phases/$phaseId/survey'
+    | '/campaigns/$campaignId/$phase/survey'
   id:
     | '__root__'
     | '/'
@@ -122,7 +122,7 @@ export interface FileRouteTypes {
     | '/survey/$surveyId'
     | '/campaigns/'
     | '/campaigns/$campaignId/'
-    | '/campaigns/$campaignId/phases/$phaseId/survey'
+    | '/campaigns/$campaignId/$phase/survey'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -133,7 +133,7 @@ export interface RootRouteChildren {
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
   CampaignsIndexRoute: typeof CampaignsIndexRoute
   CampaignsCampaignIdIndexRoute: typeof CampaignsCampaignIdIndexRoute
-  CampaignsCampaignIdPhasesPhaseIdSurveyRoute: typeof CampaignsCampaignIdPhasesPhaseIdSurveyRoute
+  CampaignsCampaignIdPhaseSurveyRoute: typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -187,11 +187,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CampaignsCampaignIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/campaigns/$campaignId/phases/$phaseId/survey': {
-      id: '/campaigns/$campaignId/phases/$phaseId/survey'
-      path: '/campaigns/$campaignId/phases/$phaseId/survey'
-      fullPath: '/campaigns/$campaignId/phases/$phaseId/survey'
-      preLoaderRoute: typeof CampaignsCampaignIdPhasesPhaseIdSurveyRouteImport
+    '/campaigns/$campaignId/$phase/survey': {
+      id: '/campaigns/$campaignId/$phase/survey'
+      path: '/campaigns/$campaignId/$phase/survey'
+      fullPath: '/campaigns/$campaignId/$phase/survey'
+      preLoaderRoute: typeof CampaignsCampaignIdPhaseSurveyRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -205,8 +205,7 @@ const rootRouteChildren: RootRouteChildren = {
   SurveySurveyIdRoute: SurveySurveyIdRoute,
   CampaignsIndexRoute: CampaignsIndexRoute,
   CampaignsCampaignIdIndexRoute: CampaignsCampaignIdIndexRoute,
-  CampaignsCampaignIdPhasesPhaseIdSurveyRoute:
-    CampaignsCampaignIdPhasesPhaseIdSurveyRoute,
+  CampaignsCampaignIdPhaseSurveyRoute: CampaignsCampaignIdPhaseSurveyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

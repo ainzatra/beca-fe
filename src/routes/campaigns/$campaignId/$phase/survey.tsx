@@ -4,15 +4,16 @@ import { uid, type Question } from '@/utils/surveyUtils';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 
-export const Route = createFileRoute(
-  '/campaigns/$campaignId/phases/$phaseId/survey',
-)({
+export const Route = createFileRoute('/campaigns/$campaignId/$phase/survey')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { phaseId } = Route.useParams();
-  // Use surveyId when calling backend to fetch the survey questions and store in questions
+  const { phase, campaignId } = Route.useParams();
+  // Create a query that fetch all surveys of the current phase
+  console.log('From survey builder', campaignId, phase);
+
+  // imbis na questions ang ipapass, ung surveys array nlng; Gawin pag may backend na
   const [questions, setQuestions] = useState<Question[]>([
     {
       id: uid('q_'),
@@ -29,7 +30,6 @@ function RouteComponent() {
       options: [],
     },
   ]);
-  console.log(questions);
 
   return (
     <div>
