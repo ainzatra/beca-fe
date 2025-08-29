@@ -9,20 +9,22 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from '@tanstack/react-router';
+import { checkPhasesCompleted } from '@/utils/utils';
 
-type CampaignStatus = 'active' | 'completed' | 'draft';
-
-export type Campaign = {
+export type CampaignStatus = 'ACTIVE' | 'COMPLETED' | 'DRAFT';
+export type CampaignPhase = 'PRE' | 'MID' | 'POST';
+export interface Campaign {
   id: string;
   title: string;
   status: CampaignStatus;
   createdAt?: string;
-  phasesCompleted?: number; // 0..3
+  activePhase: CampaignPhase;
   description?: string;
-};
+}
 
 export default function CampaignCard({ campaign }: { campaign: Campaign }) {
-  const progress = Math.max(0, Math.min(3, campaign.phasesCompleted ?? 0));
+  const progress =
+    checkPhasesCompleted(campaign.activePhase, campaign.status) || 0;
   const percent = Math.round((progress / 3) * 100);
 
   return (

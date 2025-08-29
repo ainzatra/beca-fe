@@ -41,19 +41,19 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             <Outlet />
           </div>
         </SidebarProvider>
-        <Toaster closeButton position="top-center" />
-        {/* <TanstackDevtools
-        config={{
-          position: 'bottom-left',
+        <Toaster closeButton position="top-center" duration={2000} />
+        <TanstackDevtools
+          config={{
+            position: 'bottom-left',
           }}
           plugins={[
             {
               name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-          TanStackQueryDevtools,
-        ]}
-      /> */}
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+            TanStackQueryDevtools,
+          ]}
+        />
       </>
     );
   },

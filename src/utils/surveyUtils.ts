@@ -13,4 +13,4 @@ export type Question = {
 };
 
 export const uid = (prefix = '') =>
-  `${prefix}${Math.random().toString(36).slice(2, 9)}`;
+  `${prefix}${Math.random().toString(36).slice(2, 15)}`;

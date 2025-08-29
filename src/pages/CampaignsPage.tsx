@@ -1,18 +1,54 @@
 import * as React from 'react';
 import CampaignCard from '@/components/CampaignCard';
 import type { Campaign } from '@/components/CampaignCard';
-import CreateCampaignModal from '@/components/CreateCampaignModal';
+import CreateCampaignModal, {
+  type CreateCampaign,
+} from '@/components/CreateCampaignModal';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/utils/utils';
+import { toast } from 'sonner';
 
-export default function CampaignGrid({
-  initial = [],
-}: {
-  initial?: Campaign[];
-}) {
-  const [campaigns, setCampaigns] = React.useState<Campaign[]>(initial);
+export default function CampaignGrid() {
+  const queryClient = useQueryClient();
+  const {
+    data: campaigns = [],
+    isLoading,
+    isError,
+  } = useQuery<Campaign[]>({
+    queryKey: ['campaigns'],
+    queryFn: async () => {
+      const response = await api('/campaign', true);
 
-  const onCreate = (c: Campaign) => {
-    setCampaigns((s) => [c, ...s]);
+      if (!response.ok) {
+        toast.error('Error fetching the campaigns');
+        throw new Error('Failed to fetch campaigns');
+      }
+
+      return await response.json();
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (payload: CreateCampaign) => {
+      await api('/campaign', true, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+      toast.success('New campaign created', {
+        style: {
+          backgroundColor: 'limegreen',
+          color: 'white',
+        },
+      });
+    },
+  });
+
+  const handleCreate = (payload: CreateCampaign) => {
+    mutation.mutate(payload);
   };
 
   return (
@@ -23,13 +59,30 @@ export default function CampaignGrid({
         </div>
 
         <div className="flex items-center gap-2">
-          <CreateCampaignModal onCreate={onCreate} />
+          <CreateCampaignModal onCreate={handleCreate} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {campaigns.length === 0 ? (
-          <Card>
+        {isLoading ? (
+          <Card className="col-span-3">
+            <CardHeader>
+              <CardTitle>Loading campaigns...</CardTitle>
+            </CardHeader>
+            <CardContent>Fetching campaigns, please wait.</CardContent>
+          </Card>
+        ) : isError ? (
+          <Card className="col-span-3">
+            <CardHeader>
+              <CardTitle>Error</CardTitle>
+            </CardHeader>
+            <CardContent>
+              There was an error loading campaigns. Try refreshing or check your
+              connection.
+            </CardContent>
+          </Card>
+        ) : campaigns.length === 0 ? (
+          <Card className="col-span-3">
             <CardHeader>
               <CardTitle>No campaigns yet</CardTitle>
             </CardHeader>
@@ -38,7 +91,9 @@ export default function CampaignGrid({
             </CardContent>
           </Card>
         ) : (
-          campaigns.map((c) => <CampaignCard key={c.id} campaign={c} />)
+          campaigns.map((c: Campaign) => (
+            <CampaignCard key={c.id} campaign={c} />
+          ))
         )}
       </div>
     </Card>

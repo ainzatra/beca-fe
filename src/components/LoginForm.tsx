@@ -1,28 +1,26 @@
-import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { api, cn } from '@/utils/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import images from '@/constants/images';
 import { Link, useNavigate } from '@tanstack/react-router';
-import type { User } from '@/stores/useUserStore';
+import { useUserStore, type User } from '@/stores/useUserStore';
 import { toast } from 'sonner';
 
 interface LoginFormProps {
   className?: string;
-  setUser: (user: User) => void;
   [key: string]: any;
 }
 
-export function LoginForm({ className, setUser, ...props }: LoginFormProps) {
+export function LoginForm({ className, ...props }: LoginFormProps) {
+  const { setUser } = useUserStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const validRoles = ['surveyor', 'admin', 'superadmin'];
-
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     if (username.trim() === '' || password.trim() === '') {
@@ -30,16 +28,29 @@ export function LoginForm({ className, setUser, ...props }: LoginFormProps) {
       return;
     }
 
-    if (!validRoles.includes(password.trim().toLowerCase())) {
-      toast.error('Incorrect username or password', {});
+    try {
+      const response = await api('/auth/login', false, {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        toast.error(response.statusText || 'Login failed. Please try again.');
+        return;
+      }
+
+      const result = await response.json();
+      localStorage.setItem('beca_token', result.token);
+      setUser(result);
+      toast.success('Login successful!', {
+        style: { backgroundColor: 'limegreen', color: 'white' },
+      });
+      // Navigate to dashboard
+      navigate({ to: '/dashboard' });
+    } catch (error) {
+      toast.error('Login failed. Please try again.');
       return;
     }
-
-    // Call setUser with the username password will set the role of the user
-    setUser({ id: '123', username, role: password });
-
-    // Navigate to dashboard
-    navigate({ to: '/dashboard' });
   };
 
   return (

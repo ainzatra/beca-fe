@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import type { Campaign } from '@/components/CampaignCard';
+import type { CampaignDetails } from '@/pages/CampaignDetailPage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,76 +12,53 @@ import {
   SheetFooter,
   SheetClose,
 } from '@/components/ui/sheet';
+import { api, checkPhasesCompleted } from '@/utils/utils';
+import type { CampaignStatus } from './CampaignCard';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 type Props = {
-  campaign: Campaign;
+  campaign: CampaignDetails;
 };
 
 export default function CampaignManagementSheet({ campaign }: Props) {
   const [open, setOpen] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
-  const [editStatus, setEditStatus] = useState<
-    'Draft' | 'Active' | 'Paused' | 'Completed'
-  >('Active');
+  const [editStatus, setEditStatus] = useState<CampaignStatus>('ACTIVE');
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
+  const queryClient = useQueryClient();
 
   // Initialize local edits whenever campaign changes
   useEffect(() => {
     if (!campaign) return;
+    const phaseCompleted = checkPhasesCompleted(
+      campaign.activePhase,
+      campaign.status,
+    );
     setEditTitle(campaign.title);
     setEditDescription(campaign.description ?? '');
-    setEditStatus(
-      ((): 'Draft' | 'Active' | 'Paused' | 'Completed' => {
-        const map: Record<string, 'Draft' | 'Active' | 'Paused' | 'Completed'> =
-          {
-            draft: 'Draft',
-            active: 'Active',
-            paused: 'Paused',
-            completed: 'Completed',
-          };
-        // @ts-ignore - defensive
-        return (
-          map[(campaign.status ?? 'draft').toString().toLowerCase()] ?? 'Draft'
-        );
-      })(),
-    );
-    setCurrentPhaseIndex(
-      Math.max(0, Math.min(2, (campaign.phasesCompleted ?? 0) - 1)),
-    );
+    setEditStatus(campaign.status);
+    setCurrentPhaseIndex(phaseCompleted);
   }, [campaign]);
+
+  const phases = useMemo(() => ['PRE', 'MID', 'POST'] as const, []);
 
   const basePhases = useMemo(() => {
     const id = campaign?.id ?? 'temp';
-    return [
-      {
-        id: `${id}-pre`,
-        name: 'Pre-Campaign',
-        description: 'Baseline awareness and sentiment before campaigning.',
-        responses: campaign ? 52 : 0,
-      },
-      {
-        id: `${id}-mid`,
-        name: 'Mid-Campaign',
-        description: 'Measure changes mid-campaign to inform tactics.',
-        responses: 0,
-      },
-      {
-        id: `${id}-post`,
-        name: 'Post-Campaign',
-        description: 'Final outcomes and voting intention after campaign.',
-        responses: 0,
-      },
-    ];
-  }, [campaign?.id]);
+    return phases.map((ph) => {
+      const responses = (campaign?.totalsByPhase as any)?.[ph]?.responses ?? 0;
+      return {
+        id: `${id}-${ph.toLowerCase()}`,
+        name: `${ph}-CAMPAIGN`,
+        responses,
+        phase: ph,
+      };
+    });
+  }, [campaign?.id, campaign?.totalsByPhase, phases]);
 
   const derivedPhases = basePhases.map((p, idx) => {
-    const status =
-      idx < currentPhaseIndex
-        ? 'completed'
-        : idx === currentPhaseIndex
-          ? 'active'
-          : 'pending';
+    const status = idx === currentPhaseIndex ? 'active' : 'inactive';
     return { ...p, status, index: idx };
   });
 
@@ -104,37 +81,42 @@ export default function CampaignManagementSheet({ campaign }: Props) {
 
     const nextIndex = currentPhaseIndex + 1;
     setCurrentPhaseIndex(nextIndex);
-
-    // Uncomment when have working backend to update the campaign current phase
-    // if (campaign && onUpdate) {
-    //   onUpdate({
-    //     ...campaign,
-    //     phasesCompleted: Math.max(campaign.phasesCompleted ?? 0, nextIndex + 1),
-    //   });
-    // }
   }
 
-  function onSave() {
+  async function onSave() {
     if (!editTitle.trim()) {
       // eslint-disable-next-line no-alert
       alert('Title is required.');
       return;
     }
 
-    const updated: Campaign = {
-      ...campaign,
-      title: editTitle.trim(),
+    const activePhase = phases[currentPhaseIndex];
+
+    const payload = {
+      title: editTitle,
       description: editDescription,
-      // map editStatus to lowercase variant used by Campaign.status
-      status: editStatus.toLowerCase() as Campaign['status'],
-      phasesCompleted: Math.max(
-        campaign?.phasesCompleted ?? 0,
-        currentPhaseIndex + 1,
-      ),
+      status: editStatus,
+      activePhase,
     };
 
-    // Uncomment when have working backend to update the campaign details
-    // onUpdate?.(updated);
+    const response = await api(`/campaign/${campaign.id}`, true, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      toast.error('Failed to update. Please try again later.', {
+        style: { backgroundColor: 'red', color: 'white' },
+        duration: 1000,
+      });
+      return;
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['campaign', campaign.id] });
+    toast.success('Campaign updated successfully', {
+      style: { backgroundColor: 'limegreen', color: 'white' },
+      duration: 1000,
+    });
     setOpen(false);
   }
 
@@ -145,23 +127,9 @@ export default function CampaignManagementSheet({ campaign }: Props) {
     }
     setEditTitle(campaign.title);
     setEditDescription(campaign.description ?? '');
-    setEditStatus(
-      ((): 'Draft' | 'Active' | 'Paused' | 'Completed' => {
-        const map: Record<string, 'Draft' | 'Active' | 'Paused' | 'Completed'> =
-          {
-            draft: 'Draft',
-            active: 'Active',
-            paused: 'Paused',
-            completed: 'Completed',
-          };
-        // @ts-ignore
-        return (
-          map[(campaign.status ?? 'draft').toString().toLowerCase()] ?? 'Draft'
-        );
-      })(),
-    );
+    setEditStatus(campaign.status);
     setCurrentPhaseIndex(
-      Math.max(0, Math.min(2, (campaign.phasesCompleted ?? 0) - 1)),
+      checkPhasesCompleted(campaign.activePhase, campaign.status),
     );
     setOpen(false);
   }
@@ -218,20 +186,13 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                 <select
                   value={editStatus}
                   onChange={(e) =>
-                    setEditStatus(
-                      e.target.value as
-                        | 'Draft'
-                        | 'Active'
-                        | 'Paused'
-                        | 'Completed',
-                    )
+                    setEditStatus(e.target.value as CampaignStatus)
                   }
                   className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-ring/50 focus-visible:border-ring w-full"
                 >
-                  <option>Draft</option>
-                  <option>Active</option>
-                  <option>Paused</option>
-                  <option>Completed</option>
+                  <option value={'DRAFT'}>Draft</option>
+                  <option value={'ACTIVE'}>Active</option>
+                  <option value={'COMPLETED'}>Completed</option>
                 </select>
               </div>
             </div>
@@ -242,8 +203,8 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                   Phases
                 </h3>
                 <div className="text-sm text-muted-foreground">
-                  {campaign?.phasesCompleted ?? 0} / {derivedPhases.length}{' '}
-                  complete
+                  {checkPhasesCompleted(campaign.activePhase, campaign.status)}{' '}
+                  / {derivedPhases.length} complete
                 </div>
               </div>
 
@@ -251,7 +212,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                 {derivedPhases.map((p) => (
                   <div
                     key={p.id}
-                    className={`flex items-start gap-3 rounded-md border px-3 py-2 ${
+                    className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
                       p.status === 'completed'
                         ? 'bg-green-50 border-green-200'
                         : p.status === 'active'
@@ -270,9 +231,6 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="text-sm font-medium">{p.name}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {p.description}
-                          </div>
                         </div>
                         <div className="text-xs text-muted-foreground text-right">
                           <div>{p.responses} responses</div>

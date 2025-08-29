@@ -65,20 +65,16 @@ export function AppSidebar() {
   // }, [user]);
 
   const logoutUser = () => {
-    setUser({
-      id: null,
-      username: null,
-      role: null,
-    });
+    setUser(null);
     navigate({ to: '/' });
   };
   return (
     <Sidebar className="px-4 py-6">
       <SidebarHeader>
         <div className="bg-gradient-to-r from-white to-slate-50 rounded-md p-3 shadow-inner">
-          <div className="text-sm font-semibold">{user.username}</div>
+          <div className="text-sm font-semibold">{user?.username}</div>
           <div className="text-xs text-muted-foreground">
-            {user.role?.toUpperCase()}
+            {user?.role?.toUpperCase()}
           </div>
         </div>
       </SidebarHeader>

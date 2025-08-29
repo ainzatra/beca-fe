@@ -18,34 +18,36 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import type { Campaign } from '@/components/CampaignCard';
+import { cn } from '@/utils/utils';
+import type { Campaign, CampaignStatus } from '@/components/CampaignCard';
+
+export interface CreateCampaign {
+  title: string;
+  description?: string;
+  status: CampaignStatus;
+}
 
 export default function CreateCampaignModal({
   onCreate,
 }: {
-  onCreate?: (c: Campaign) => void;
+  onCreate: (payload: CreateCampaign) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
-  const [status, setStatus] = React.useState<Campaign['status']>('draft');
+  const [status, setStatus] = React.useState<Campaign['status']>('DRAFT');
 
   const submit = () => {
-    const id = `c_${Math.random().toString(36).slice(2, 9)}`;
-    const campaign: Campaign = {
-      id,
-      title: title || 'Untitled Campaign',
+    const campaign: CreateCampaign = {
+      title: title,
       description,
       status,
-      phasesCompleted: 0,
-      createdAt: new Date().toISOString(),
     };
-    onCreate?.(campaign);
+    onCreate(campaign);
     setOpen(false);
     setTitle('');
     setDescription('');
-    setStatus('draft');
+    setStatus('DRAFT');
   };
 
   return (
@@ -100,9 +102,9 @@ export default function CreateCampaignModal({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="DRAFT">Draft</SelectItem>
+              <SelectItem value="ACTIVE">Active</SelectItem>
+              <SelectItem value="COMPLETED">Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>

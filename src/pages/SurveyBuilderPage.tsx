@@ -16,45 +16,96 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import type { CampaignPhase } from '@/components/CampaignCard';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/utils/utils';
+import { toast } from 'sonner';
 
-interface SurveyBuilderProps {
-  questions: Question[];
-  setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
+export interface Survey {
+  id: string;
+  title: string;
+  form: string;
+  createdAt: string;
+  phase: CampaignPhase;
 }
 
-// Query instead
-const surveys = [
-  {
-    id: '1',
-    title: 'Survey 1',
-    form: '{json stringified here}',
-  },
-  {
-    id: '2',
-    title: 'Survey 2',
-    form: '{json stringified here}',
-  },
-  {
-    id: '3',
-    title: 'Survey 3',
-    form: '{json stringified here}',
-  },
-];
+export interface UpdateSurvey {
+  title: string;
+  form: string;
+}
 
-export default function SurveyBuilderPage({
-  questions,
-  setQuestions,
-}: SurveyBuilderProps) {
+export interface SurveyList {
+  id: string;
+  title: string;
+  phase: CampaignPhase;
+}
+
+interface SurveyBuilderProps {
+  surveys: SurveyList[];
+}
+
+export default function SurveyBuilderPage({ surveys }: SurveyBuilderProps) {
   const [surveyTitle, setSurveyTitle] = useState<string>('Pre-Campaign Survey');
   const [defaultInfo, setDefaultInfo] = useState<Record<string, string>>({});
-  const [survey, setSurvey] = useState('');
+  const [selectedSurvey, setSelectedSurvey] = useState('');
+  const [questions, setQuestions] = useState<Question[]>([]);
+
+  const queryClient = useQueryClient();
 
   // Set first survey as the default survey to display
   useEffect(() => {
-    if (surveys) {
-      setSurvey(surveys[0].id);
+    if (surveys && surveys.length > 0) {
+      setSelectedSurvey(surveys[0].id);
     }
-  }, []);
+  }, [surveys]);
+
+  const {
+    data: survey,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['survey', selectedSurvey],
+    queryFn: async () => {
+      const response = await api(`/survey/${selectedSurvey}`, true);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch survey');
+      }
+      const result = await response.json();
+      return result;
+    },
+    enabled: !!selectedSurvey,
+  });
+
+  // Sync fetched survey into local state when it arrives
+  useEffect(() => {
+    if (!survey) return;
+    console.log(survey.form);
+    const parsedForm = JSON.parse(survey.form);
+    setQuestions(parsedForm);
+    setSurveyTitle(survey.title);
+  }, [survey]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (payload: UpdateSurvey) => {
+      console.log('Update payload:', payload);
+      await api(`/survey/${survey.id}`, true, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: () => {
+      toast.success('Survey saved successfully.', {
+        style: {
+          backgroundColor: 'limegreen',
+          color: 'white',
+        },
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['survey', selectedSurvey] });
+      queryClient.invalidateQueries({ queryKey: ['surveys'] });
+    },
+  });
 
   const addQuestion = (type: QuestionType = 'text') => {
     const q: Question = {
@@ -93,14 +144,9 @@ export default function SurveyBuilderPage({
   const saveSurvey = () => {
     const payload = {
       title: surveyTitle,
-      defaultInfo,
-      questions,
-      updatedAt: new Date().toISOString(),
+      form: JSON.stringify(questions),
     };
-    // For demo we store locally and log
-    localStorage.setItem('demo_survey', JSON.stringify(payload));
-    console.log('Saved survey (demo):', payload);
-    alert('Survey saved to localStorage (demo). Check console for payload.');
+    saveMutation.mutate(payload);
   };
 
   return (
@@ -118,13 +164,22 @@ export default function SurveyBuilderPage({
 
               <div className="flex flex-wrap items-start md:items-center gap-2">
                 <div className="w-full">
-                  <Select value={survey} onValueChange={(s) => setSurvey(s)}>
+                  <Select
+                    value={selectedSurvey}
+                    onValueChange={(s) => {
+                      setSelectedSurvey(s);
+                    }}
+                  >
                     <SelectTrigger className="cursor-pointer w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {surveys.map((s) => (
-                        <SelectItem value={s.id} className="cursor-pointer">
+                      {(surveys || []).map((s) => (
+                        <SelectItem
+                          key={s.id}
+                          value={s.id}
+                          className="cursor-pointer"
+                        >
                           {s.title}
                         </SelectItem>
                       ))}

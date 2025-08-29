@@ -124,9 +124,9 @@ export function AnalyticsStats({ data }: { data: AnalyticsData }) {
     <div className="grid grid-cols-3 gap-4">
       <StatCard
         value={data.totalResponses}
-        title="Total Responses"
+        title="Total Responses123"
         subtitle={<div className="text-xs">Across selected campaign</div>}
-        className="bg-gradient-to-br from-blue-700 to-emerald-500"
+        className="bg-gradient-to-br from-red-700 to-emerald-500"
       />
 
       <StatCard

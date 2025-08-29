@@ -1,6 +1,13 @@
+import * as React from 'react';
 import PrescriptivePanel from '@/components/PrescriptivePanel';
 import StatCard from '@/components/StatCard';
 import { ProgressCard } from '@/components/ProgressCard';
+import AnalyticsStats from '@/components/AnalyticsStats';
+import type { AnalyticsData } from '@/components/AnalyticsStats';
+import CampaignCard from '@/components/CampaignCard';
+import type { Campaign } from '@/components/CampaignCard';
+import CreateCampaignModal from '@/components/CreateCampaignModal';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -9,133 +16,212 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
+import { Link } from '@tanstack/react-router';
 
 export function DashboardPage() {
+  // Replace these with real data hooks (TanStack Query) later.
+  const campaigns: Campaign[] = [
+    {
+      id: 'campaign-1',
+      title: 'Metro Outreach May 2025',
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      phasesCompleted: 1,
+      description: 'Pre-campaign surveys in Metro area',
+    },
+    {
+      id: 'campaign-2',
+      title: 'Rural Engagement Pilot',
+      status: 'draft',
+      createdAt: new Date().toISOString(),
+      phasesCompleted: 0,
+      description: 'Testing survey forms and enumerator training',
+    },
+    {
+      id: 'campaign-3',
+      title: 'Province Sweep Q2',
+      status: 'completed',
+      createdAt: new Date().toISOString(),
+      phasesCompleted: 3,
+      description: 'Full cycle completed',
+    },
+  ];
+
+  const analytics: AnalyticsData = {
+    totalResponses: 175,
+    positive: 88,
+    neutral: 52,
+    negative: 35,
+    confidence: 78,
+    topIssues: [],
+  };
+
   const stats = {
-    totalResponses: 5,
-    awareness: 3,
-    support: 2,
-    surveyors: 3,
+    totalCampaigns: campaigns.length,
+    totalResponses: analytics.totalResponses,
+    surveyors: 12, // mock - replace with real
   };
 
   return (
     <div className="bg-white rounded-xl p-4 space-y-6">
-      <div className="rounded-lg bg-gradient-to-r from-amber-400 to-amber-600 text-white p-4 shadow-md">
-        <div className="font-medium">Current Phase: Pre-Campaign Survey</div>
-        <div className="text-sm">Day 5 of 45</div>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
+            Overview across all campaigns and survey activity
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <CreateCampaignModal onCreate={() => undefined} />
+          <Link to="/campaigns" className="inline-block">
+            <Button size="sm" variant="outline">
+              View all campaigns
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      {/* Key stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatCard
+          value={stats.totalCampaigns}
+          title="Total Campaigns"
+          subtitle={<div className="text-xs">Active, draft and completed</div>}
+          className="bg-gradient-to-br from-indigo-600 to-sky-500"
+        />
+
         <StatCard
           value={stats.totalResponses}
           title="Total Responses"
-          subtitle={
-            <div className="text-xs">
-              📈 +0 today • Pre: 5 • Mid: 0 • Post: 0
-            </div>
-          }
+          subtitle={<div className="text-xs">Across all campaigns</div>}
           className="bg-gradient-to-br from-blue-700 to-emerald-500"
         />
-        <StatCard
-          value={stats.awareness}
-          title="Candidate Awareness (67%)"
-          subtitle={
-            <div className="text-xs">
-              📊 60% this week • Based on all phases
-            </div>
-          }
-          className="bg-gradient-to-br from-blue-700 to-emerald-500"
-        />
-        <StatCard
-          value={stats.support}
-          title="Support Count (43%)"
-          subtitle={
-            <div className="text-xs">⬆️ 40% this week • Combined analysis</div>
-          }
-          className="bg-gradient-to-br from-blue-700 to-emerald-500"
-        />
-      </div>
 
-      <div className="w-1/3">
         <StatCard
           value={stats.surveyors}
           title="Active Surveyors"
-          subtitle={
-            <div className="text-xs">🟢 3 active • Across all phases</div>
-          }
-          className="bg-gradient-to-br from-blue-700 to-emerald-500"
+          subtitle={<div className="text-xs">Field enumerators online</div>}
+          className="bg-gradient-to-br from-emerald-600 to-emerald-400"
         />
+      </div>
+
+      {/* Two-column main area: Recent campaigns + Analytics summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>📋 Recent Campaigns</CardTitle>
+            <CardDescription>
+              Quick access to the most recent campaigns and their progress
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {campaigns.slice(0, 4).map((c) => (
+                <CampaignCard key={c.id} campaign={c} />
+              ))}
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <div className="flex items-center gap-2">
+              <Link to="/campaigns" className="inline-block">
+                <Button size="sm">Manage campaigns</Button>
+              </Link>
+              <div className="ml-auto text-xs text-muted-foreground">
+                Showing {Math.min(4, campaigns.length)} of {campaigns.length}
+              </div>
+            </div>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>📊 Analytics Snapshot</CardTitle>
+            <CardDescription>
+              High-level sentiment and response metrics
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <AnalyticsStats data={analytics} />
+
+            <div className="mt-4">
+              <div className="font-semibold mb-2">
+                Phase progress (all campaigns)
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <ProgressCard
+                  title="Pre-Campaign"
+                  count={75}
+                  from="#10b981"
+                  to="#059669"
+                />
+                <ProgressCard
+                  title="Mid-Campaign"
+                  count={60}
+                  from="#fb923c"
+                  to="#f97316"
+                />
+                <ProgressCard
+                  title="Post-Election"
+                  count={40}
+                  from="#8b5cf6"
+                  to="#6d28d9"
+                />
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline">
+                Open Analytics
+              </Button>
+              <Button size="sm" className="ml-auto">
+                Export snapshot
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
 
       <PrescriptivePanel />
 
       <Card>
         <CardHeader>
-          <CardTitle>📈 Real-time Campaign Progress</CardTitle>
-          <CardDescription>
-            Live overview of responses per phase
-          </CardDescription>
+          <CardTitle>💬 Live Updates</CardTitle>
+          <CardDescription>Recent activity across campaigns</CardDescription>
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <ProgressCard
-              title="📊 Pre-Campaign Phase"
-              count={5}
-              from="#10b981"
-              to="#059669"
-            />
-            <ProgressCard
-              title="🎯 Mid-Campaign Phase"
-              count={0}
-              from="#fb923c"
-              to="#f97316"
-            />
-            <ProgressCard
-              title="📦 Post-Election Phase"
-              count={0}
-              from="#8b5cf6"
-              to="#6d28d9"
-            />
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <div className="text-xs text-muted-foreground">Last Survey</div>
+              <div className="font-medium">Carmen Lopez — Pre-Campaign</div>
+            </div>
 
-          <div className="bg-slate-50 rounded-md p-3 border">
-            <div className="font-semibold">💬 Live Updates</div>
-            <div className="mt-2 grid grid-cols-4 gap-4 text-sm">
-              <div>
-                <div className="text-xs text-muted-foreground">
-                  Last Survey:
-                </div>
-                <div className="font-medium">Carmen Lopez (PRE CAMPAIGN)</div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">
-                  Today's Total:
-                </div>
-                <div className="font-medium">0</div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">This Week:</div>
-                <div className="font-medium">0</div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">
-                  Overall Trend:
-                </div>
-                <div className="font-medium">Stable</div>
-              </div>
+            <div>
+              <div className="text-xs text-muted-foreground">Today's Total</div>
+              <div className="font-medium">12</div>
+            </div>
+
+            <div>
+              <div className="text-xs text-muted-foreground">This Week</div>
+              <div className="font-medium">84</div>
             </div>
           </div>
         </CardContent>
 
         <CardFooter>
           <div className="flex gap-3">
-            <button className="px-3 py-2 rounded-md bg-slate-200">
+            <Button size="sm" variant="ghost">
               Export CSV
-            </button>
-            <button className="px-3 py-2 rounded-md border">
+            </Button>
+            <Button size="sm" variant="outline">
               Open Reports
-            </button>
+            </Button>
           </div>
         </CardFooter>
       </Card>

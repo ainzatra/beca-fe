@@ -1,8 +1,17 @@
 import Header from '@/components/Header';
 import SurveyBuilderPage from '@/pages/SurveyBuilderPage';
-import { uid, type Question } from '@/utils/surveyUtils';
+import { api } from '@/utils/utils';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/campaigns/$campaignId/$phase/survey')({
   component: RouteComponent,
@@ -10,31 +19,72 @@ export const Route = createFileRoute('/campaigns/$campaignId/$phase/survey')({
 
 function RouteComponent() {
   const { phase, campaignId } = Route.useParams();
-  // Create a query that fetch all surveys of the current phase
-  console.log('From survey builder', campaignId, phase);
 
-  // imbis na questions ang ipapass, ung surveys array nlng; Gawin pag may backend na
-  const [questions, setQuestions] = useState<Question[]>([
-    {
-      id: uid('q_'),
-      title: 'How likely are you to vote in the upcoming election?',
-      type: 'radio',
-      required: true,
-      options: ['Very likely', 'Somewhat likely', 'Unlikely', 'Not sure'],
+  const {
+    data: surveys,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ['surveys', phase, campaignId],
+    queryFn: async () => {
+      const response = await api(`/survey/phase/${phase}/${campaignId}`, true);
+
+      // Throw on non-ok so react-query sets isError
+      if (!response.ok) {
+        throw new Error('Failed to fetch surveys');
+      }
+
+      return await response.json();
     },
-    {
-      id: uid('q_'),
-      title: 'Who do you currently support? (optional)',
-      type: 'text',
-      required: false,
-      options: [],
-    },
-  ]);
+  });
 
   return (
     <div>
       <Header />
-      <SurveyBuilderPage questions={questions} setQuestions={setQuestions} />
+
+      {isLoading ? (
+        <main className="w-full">
+          <Card>
+            <CardHeader>
+              <CardTitle>Loading surveys…</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3">
+                <Skeleton className="h-6 w-3/4" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Skeleton className="h-24" />
+                  <Skeleton className="h-24" />
+                  <Skeleton className="h-24" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      ) : isError ? (
+        <main className="w-full">
+          <Card>
+            <CardHeader>
+              <CardTitle>Error loading surveys</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm text-muted-foreground">
+                There was a problem fetching surveys. This can happen when the
+                server is unavailable or your network connection is offline.
+              </div>
+            </CardContent>
+            <CardFooter>
+              <div className="flex gap-3">
+                <Button variant="default" onClick={() => refetch()}>
+                  Retry
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        </main>
+      ) : (
+        <SurveyBuilderPage surveys={surveys} />
+      )}
     </div>
   );
 }

@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Campaign } from '@/components/CampaignCard';
 import CampaignManagementSheet from '@/components/CampaignManagementSheet';
+import { checkPhasesCompleted } from '@/utils/utils';
+import type { CampaignDetails } from '@/pages/CampaignDetailPage';
 
 export default function CampaignHeader({
   campaign,
-  onRunAnalysis,
 }: {
-  campaign: Campaign;
-  onRunAnalysis?: () => void;
+  campaign: CampaignDetails;
 }) {
   const created = campaign.createdAt
     ? new Date(campaign.createdAt).toLocaleString()
@@ -30,14 +30,14 @@ export default function CampaignHeader({
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-semibold">{campaign.title}</h2>
               <Badge
-                variant={
-                  campaign.status === 'active'
-                    ? 'default'
-                    : campaign.status === 'completed'
-                      ? 'secondary'
-                      : undefined
-                }
-                className="capitalize"
+                variant="default"
+                className={`capitalize ${
+                  campaign.status === 'ACTIVE'
+                    ? 'bg-green-500'
+                    : campaign.status === 'COMPLETED'
+                      ? 'bg-primary'
+                      : 'bg-slate-500'
+                }`}
               >
                 {campaign.status.toUpperCase()}
               </Badge>
@@ -54,36 +54,19 @@ export default function CampaignHeader({
             <div className="text-xs text-muted-foreground">
               Phases complete:{' '}
               <span className="font-medium">
-                {campaign.phasesCompleted ?? 0}/3
+                {checkPhasesCompleted(campaign.activePhase, campaign.status)}/3
               </span>
             </div>
 
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-start gap-2">
-                <CampaignManagementSheet campaign={campaign} />
+                {checkPhasesCompleted(campaign.activePhase, campaign.status) !==
+                  3 && <CampaignManagementSheet campaign={campaign} />}
               </div>
-
-              <Button
-                size="sm"
-                variant="default"
-                className="bg-emerald-500 text-white"
-                onClick={onRunAnalysis}
-              >
-                🔮 Run Analysis
-              </Button>
             </div>
           </div>
         </CardTitle>
       </CardHeader>
-
-      <CardContent>
-        <div className="text-sm text-muted-foreground">
-          Quick actions and metadata are shown on the right. Use "Run Analysis"
-          to trigger prescriptive AI when enough responses are available.
-        </div>
-      </CardContent>
-
-      <CardFooter />
     </Card>
   );
 }
