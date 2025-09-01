@@ -1,6 +1,7 @@
 /**
  * Shared types and helpers for survey components
  */
+import cuid from 'cuid';
 
 export type QuestionType = 'text' | 'textarea' | 'radio' | 'checkbox';
 
@@ -12,5 +13,4 @@ export type Question = {
   options: string[];
 };
 
-export const uid = (prefix = '') =>
-  `${prefix}${Math.random().toString(36).slice(2, 15)}`;
+export const uid = (prefix = '') => `${prefix}${cuid()}`;
