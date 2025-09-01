@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import type { CampaignPhase } from '@/components/CampaignCard';
 
 export const Route = createFileRoute('/campaigns/$campaignId/$phase/survey')({
   component: RouteComponent,
@@ -83,7 +84,11 @@ function RouteComponent() {
           </Card>
         </main>
       ) : (
-        <SurveyBuilderPage surveys={surveys} />
+        <SurveyBuilderPage
+          surveys={surveys}
+          phase={phase as CampaignPhase}
+          campaignId={campaignId}
+        />
       )}
     </div>
   );

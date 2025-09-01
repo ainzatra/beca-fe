@@ -8,7 +8,7 @@ import SurveyPreview from '@/components/SurveyPreview';
 import type { Question, QuestionType } from '@/utils/surveyUtils';
 import { uid } from '@/utils/surveyUtils';
 import { Card } from '@/components/ui/card';
-import { Plus, Save } from 'lucide-react';
+import { Plus, Save, Trash } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import CreateSurveySheet from '@/components/CreateSurveySheet';
 import type { CampaignPhase } from '@/components/CampaignCard';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/utils/utils';
@@ -42,9 +43,15 @@ export interface SurveyList {
 
 interface SurveyBuilderProps {
   surveys: SurveyList[];
+  phase: CampaignPhase;
+  campaignId: string;
 }
 
-export default function SurveyBuilderPage({ surveys }: SurveyBuilderProps) {
+export default function SurveyBuilderPage({
+  surveys,
+  phase,
+  campaignId,
+}: SurveyBuilderProps) {
   const [surveyTitle, setSurveyTitle] = useState<string>('Pre-Campaign Survey');
   const [defaultInfo, setDefaultInfo] = useState<Record<string, string>>({});
   const [selectedSurvey, setSelectedSurvey] = useState('');
@@ -103,7 +110,37 @@ export default function SurveyBuilderPage({ surveys }: SurveyBuilderProps) {
       });
 
       queryClient.invalidateQueries({ queryKey: ['survey', selectedSurvey] });
-      queryClient.invalidateQueries({ queryKey: ['surveys'] });
+      queryClient.invalidateQueries({
+        queryKey: ['surveys', phase, campaignId],
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      await api(`/survey/${survey.id}`, true, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      toast.success('Survey deleted successfully.', {
+        style: {
+          backgroundColor: 'crimson',
+          color: 'white',
+        },
+      });
+
+      // After deletion, pick the next available survey if any, otherwise clear selection
+      const remaining = (surveys || []).filter((s) => s.id !== survey.id);
+      setSelectedSurvey(remaining[0]?.id ?? '');
+
+      queryClient.invalidateQueries({
+        queryKey: ['surveys', phase, campaignId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['survey', selectedSurvey] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.message ?? 'Failed to delete survey');
     },
   });
 
@@ -187,21 +224,28 @@ export default function SurveyBuilderPage({ surveys }: SurveyBuilderProps) {
                   </Select>
                 </div>
                 <div className="flex w-full flex-wrap gap-2">
+                  <div className="flex-1">
+                    <CreateSurveySheet phase={phase} campaignId={campaignId} />
+                  </div>
                   <Button
-                    onClick={() => alert('Add New Survey')}
-                    variant="secondary"
-                    className="cursor-pointer flex-1"
+                    onClick={() => {
+                      if (!survey?.id) {
+                        toast.error('No survey selected');
+                        return;
+                      }
+                      if (
+                        !confirm(
+                          'Are you sure you want to delete this survey? This action cannot be undone.',
+                        )
+                      )
+                        return;
+                      deleteMutation.mutate();
+                    }}
+                    variant="destructive"
+                    className="flex-1"
                   >
-                    <Plus />
-                    Add Survey
-                  </Button>
-                  <Button
-                    onClick={saveSurvey}
-                    variant="default"
-                    className="cursor-pointer flex-1"
-                  >
-                    <Save />
-                    Save Survey
+                    <Trash />
+                    Delete Survey
                   </Button>
                 </div>
               </div>
@@ -250,7 +294,7 @@ export default function SurveyBuilderPage({ surveys }: SurveyBuilderProps) {
                   onMoveDown={() => moveQuestion(q.id, 'down')}
                 />
               ))}
-              <div className="mt-4">
+              <div className="mt-4 flex justify-between">
                 <Button
                   onClick={() => addQuestion()}
                   variant="secondary"
@@ -258,6 +302,21 @@ export default function SurveyBuilderPage({ surveys }: SurveyBuilderProps) {
                 >
                   <Plus />
                   Add Question
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    if (!survey?.id) {
+                      toast.error('No survey selected');
+                      return;
+                    }
+                    saveSurvey();
+                  }}
+                  variant="default"
+                  className=""
+                >
+                  <Save />
+                  Save Survey
                 </Button>
               </div>
             </div>
