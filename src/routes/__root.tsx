@@ -26,9 +26,10 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
     const state = useRouterState();
-    const isAuthRoute = !/^\/($|login$|404$|forgot-password(\/.*)?$)/.test(
-      state.location.pathname,
-    );
+    const isAuthRoute =
+      !/^\/($|login$|404$|forgot-password(\/.*)?$|survey\/[^/]+$)/.test(
+        state.location.pathname,
+      );
     return (
       <>
         <SidebarProvider className=" min-h-screen relative">
