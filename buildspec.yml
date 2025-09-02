@@ -1,0 +1,59 @@
+version: 0.2
+#
+# Required environment variables (set in CodeBuild project settings):
+# - S3_BUCKET (required) : S3 bucket name to upload the site to, e.g. my-bucket
+# - AWS_DEFAULT_REGION (required) : AWS region, e.g. us-east-1
+# - CLOUDFRONT_DISTRIBUTION_ID (optional) : when present an invalidation will be issued
+#
+env:
+  variables:
+    # You can set defaults here if desired, or leave blank to force providing via project env
+    # S3_BUCKET: ""
+    # AWS_DEFAULT_REGION: ""
+    # CLOUDFRONT_DISTRIBUTION_ID: ""
+
+cache:
+  paths:
+    - '/root/.npm/**/*'           # cache npm registry files to speed up installs
+    - 'beca-fe/node_modules/**/*' # cache frontend node_modules between builds
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Installing root-level tools (if any)"
+      - echo "Node version: $(node --version)"
+      - echo "npm version: $(npm --version)"
+  pre_build:
+    commands:
+      - echo "Entering frontend directory"
+      - cd beca-fe
+      - echo "Running clean install"
+      - npm ci
+  build:
+    commands:
+      - echo "Building the frontend"
+      - npm run build
+  post_build:
+    commands:
+      - echo "Preparing to upload build artifacts to S3"
+      - |
+        if [ -z "$S3_BUCKET" ]; then
+          echo "ERROR: S3_BUCKET environment variable is not set"
+          exit 1
+        fi
+      - aws s3 sync dist/ "s3://$S3_BUCKET" --delete --acl public-read --region "$AWS_DEFAULT_REGION"
+      - |
+        if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ]; then
+          echo "Creating CloudFront invalidation for distribution: $CLOUDFRONT_DISTRIBUTION_ID"
+          aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
+        else
+          echo "CLOUDFRONT_DISTRIBUTION_ID not set; skipping CloudFront invalidation"
+        fi
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'beca-fe/dist'
+  discard-paths: no
