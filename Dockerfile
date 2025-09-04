@@ -6,6 +6,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
+ARG VITE_BACKEND_URL
+
 # copy source and build
 COPY . .
 RUN npm run build-only
