@@ -24,7 +24,7 @@ phases:
   build:
     commands:
       - echo Building Docker image from beca-fe/Dockerfile...
-      - docker build -t "$IMAGE_URI" ${DOCKER_BUILD_ARGS:-} "$CODEBUILD_SRC_DIR/beca-fe"
+      - docker build -t "$IMAGE_URI" ${DOCKER_BUILD_ARGS:-} "./beca-fe"
   post_build:
     commands:
       - echo Pushing Docker image $IMAGE_URI ...
@@ -39,11 +39,3 @@ phases:
           echo "PUSH_LATEST not set to 'true' - skipping latest tag push"
         fi
       - echo Build completed on `date`
-      - |
-        # Optionally package built dist/ as frontend.zip so teams can use the artifact
-        if [ -d "beca-fe/dist" ]; then
-          echo "Packaging beca-fe/dist into frontend.zip"
-          (cd beca-fe/dist && zip -r "$CODEBUILD_SRC_DIR/frontend.zip" .)
-        else
-          echo "No beca-fe/dist directory found; skipping artifact packaging"
-        fi
