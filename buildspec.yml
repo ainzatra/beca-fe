@@ -24,7 +24,7 @@ phases:
   build:
     commands:
       - echo Building Docker image from beca-fe/Dockerfile...
-      - docker build -t "$IMAGE_URI" ${DOCKER_BUILD_ARGS:-} "./beca-fe"
+      - docker build -t "$IMAGE_URI" ${DOCKER_BUILD_ARGS:-} "."
   post_build:
     commands:
       - echo Pushing Docker image $IMAGE_URI ...
