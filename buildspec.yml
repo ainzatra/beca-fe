@@ -17,10 +17,6 @@ phases:
     commands:
       - set -eux
       - echo "Building the frontend (Vite)..."
-      - echo "Ensuring ECR repository exists (if permissions allow)..."
-      - |
-        aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" --region "$AWS_DEFAULT_REGION" || \
-        aws ecr create-repository --repository-name "$ECR_REPOSITORY" --region "$AWS_DEFAULT_REGION"
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
       - export IMAGE_TAG=${IMAGE_TAG:-latest}
