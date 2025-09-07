@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsersRouteImport } from './routes/users'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -19,6 +20,11 @@ import { Route as SurveySurveyIdRouteImport } from './routes/survey/$surveyId'
 import { Route as CampaignsCampaignIdIndexRouteImport } from './routes/campaigns/$campaignId/index'
 import { Route as CampaignsCampaignIdPhaseSurveyRouteImport } from './routes/campaigns/$campaignId/$phase/survey'
 
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
   '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
   '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns/': typeof CampaignsIndexRoute
   '/campaigns/$campaignId/': typeof CampaignsCampaignIdIndexRoute
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/users'
     | '/survey/$surveyId'
     | '/campaigns'
     | '/campaigns/$campaignId'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/users'
     | '/survey/$surveyId'
     | '/campaigns'
     | '/campaigns/$campaignId'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/users'
     | '/survey/$surveyId'
     | '/campaigns/'
     | '/campaigns/$campaignId/'
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  UsersRoute: typeof UsersRoute
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
   CampaignsIndexRoute: typeof CampaignsIndexRoute
   CampaignsCampaignIdIndexRoute: typeof CampaignsCampaignIdIndexRoute
@@ -151,6 +164,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  UsersRoute: UsersRoute,
   SurveySurveyIdRoute: SurveySurveyIdRoute,
   CampaignsIndexRoute: CampaignsIndexRoute,
   CampaignsCampaignIdIndexRoute: CampaignsCampaignIdIndexRoute,

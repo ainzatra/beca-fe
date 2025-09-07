@@ -18,6 +18,7 @@ import { Toaster } from 'sonner';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { useUserStore } from '@/stores/useUserStore';
+import { useEffect } from 'react';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -30,6 +31,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       !/^\/($|login$|404$|forgot-password(\/.*)?$|survey\/[^/]+$)/.test(
         state.location.pathname,
       );
+
+    const user = useUserStore((s) => s.user);
+    useEffect(() => {
+      console.log({ user });
+    }, [user]);
+
     return (
       <>
         <SidebarProvider className=" min-h-screen relative">
@@ -45,7 +52,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         <Toaster closeButton position="top-center" duration={2000} />
         <TanstackDevtools
           config={{
-            position: 'bottom-left',
+            position: 'bottom-right',
           }}
           plugins={[
             {

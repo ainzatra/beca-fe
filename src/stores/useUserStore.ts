@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type UserRole = 'surveyor' | 'admin' | 'superadmin';
+export type UserRole = 'SURVEYOR' | 'ADMIN' | 'SUPERADMIN';
 
 export type User = {
   id: string | null;

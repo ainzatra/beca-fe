@@ -39,8 +39,6 @@ async function initAuth() {
   const token = localStorage.getItem('beca_token');
   if (!token) return;
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
   try {
     const res = await api(`/auth/me`, true);
 
@@ -54,8 +52,8 @@ async function initAuth() {
     }
 
     const data = await res.json();
-
-    useUserStore.setState(data);
+    console.log('refresh', data);
+    useUserStore.setState({ user: data });
   } catch (err) {
     console.error('Auth rehydrate error', err);
   }

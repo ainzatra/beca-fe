@@ -6,7 +6,9 @@ import AnalyticsStats from '@/components/AnalyticsStats';
 import type { AnalyticsData } from '@/components/AnalyticsStats';
 import CampaignCard from '@/components/CampaignCard';
 import type { Campaign } from '@/components/CampaignCard';
-import CreateCampaignModal from '@/components/CreateCampaignModal';
+import CreateCampaignModal, {
+  type CreateCampaign,
+} from '@/components/CreateCampaignModal';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -17,35 +19,52 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Link } from '@tanstack/react-router';
+import { api } from '@/utils/utils';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export function DashboardPage() {
   // Replace these with real data hooks (TanStack Query) later.
-  const campaigns: Campaign[] = [
-    {
-      id: 'campaign-1',
-      title: 'Metro Outreach May 2025',
-      status: 'active',
-      createdAt: new Date().toISOString(),
-      phasesCompleted: 1,
-      description: 'Pre-campaign surveys in Metro area',
+  const queryClient = useQueryClient();
+  const {
+    data: campaigns = [],
+    isLoading,
+    isError,
+  } = useQuery<Campaign[]>({
+    queryKey: ['campaigns'],
+    queryFn: async () => {
+      const response = await api('/campaign', true);
+
+      if (!response.ok) {
+        toast.error('Error fetching the campaigns');
+        throw new Error('Failed to fetch campaigns');
+      }
+
+      return await response.json();
     },
-    {
-      id: 'campaign-2',
-      title: 'Rural Engagement Pilot',
-      status: 'draft',
-      createdAt: new Date().toISOString(),
-      phasesCompleted: 0,
-      description: 'Testing survey forms and enumerator training',
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (payload: CreateCampaign) => {
+      await api('/campaign', true, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
     },
-    {
-      id: 'campaign-3',
-      title: 'Province Sweep Q2',
-      status: 'completed',
-      createdAt: new Date().toISOString(),
-      phasesCompleted: 3,
-      description: 'Full cycle completed',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+      toast.success('New campaign created', {
+        style: {
+          backgroundColor: 'limegreen',
+          color: 'white',
+        },
+      });
     },
-  ];
+  });
+
+  const handleCreate = (payload: CreateCampaign) => {
+    mutation.mutate(payload);
+  };
 
   const analytics: AnalyticsData = {
     totalResponses: 175,
@@ -73,7 +92,7 @@ export function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <CreateCampaignModal onCreate={() => undefined} />
+          <CreateCampaignModal onCreate={handleCreate} />
           <Link to="/campaigns" className="inline-block">
             <Button size="sm" variant="outline">
               View all campaigns
@@ -137,15 +156,15 @@ export function DashboardPage() {
         </Card>
 
         <Card>
-          <CardHeader>
+          {/* <CardHeader>
             <CardTitle>📊 Analytics Snapshot</CardTitle>
             <CardDescription>
               High-level sentiment and response metrics
             </CardDescription>
-          </CardHeader>
+          </CardHeader> */}
 
           <CardContent>
-            <AnalyticsStats data={analytics} />
+            {/* <AnalyticsStats data={analytics} /> */}
 
             <div className="mt-4">
               <div className="font-semibold mb-2">
@@ -165,7 +184,7 @@ export function DashboardPage() {
                   to="#f97316"
                 />
                 <ProgressCard
-                  title="Post-Election"
+                  title="Post-Campaign"
                   count={40}
                   from="#8b5cf6"
                   to="#6d28d9"
@@ -174,7 +193,7 @@ export function DashboardPage() {
             </div>
           </CardContent>
 
-          <CardFooter>
+          {/* <CardFooter>
             <div className="flex items-center gap-2">
               <Button size="sm" variant="outline">
                 Open Analytics
@@ -183,7 +202,7 @@ export function DashboardPage() {
                 Export snapshot
               </Button>
             </div>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </div>
 

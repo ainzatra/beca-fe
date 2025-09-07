@@ -34,12 +34,13 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         body: JSON.stringify({ username, password }),
       });
 
+      const result = await response.json();
       if (!response.ok) {
-        toast.error(response.statusText || 'Login failed. Please try again.');
+        console.log({ result });
+        toast.error(result.message || 'Login failed. Please try again.');
         return;
       }
 
-      const result = await response.json();
       localStorage.setItem('beca_token', result.token);
       setUser(result);
       toast.success('Login successful!', {
