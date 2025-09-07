@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
+import { Route as ResponsesRouteImport } from './routes/responses'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -23,6 +24,11 @@ import { Route as CampaignsCampaignIdPhaseSurveyRouteImport } from './routes/cam
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResponsesRoute = ResponsesRouteImport.update({
+  id: '/responses',
+  path: '/responses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/responses': typeof ResponsesRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/responses': typeof ResponsesRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/responses': typeof ResponsesRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns/': typeof CampaignsIndexRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/responses'
     | '/users'
     | '/survey/$surveyId'
     | '/campaigns'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/responses'
     | '/users'
     | '/survey/$surveyId'
     | '/campaigns'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/responses'
     | '/users'
     | '/survey/$surveyId'
     | '/campaigns/'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  ResponsesRoute: typeof ResponsesRoute
   UsersRoute: typeof UsersRoute
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
   CampaignsIndexRoute: typeof CampaignsIndexRoute
@@ -169,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/responses': {
+      id: '/responses'
+      path: '/responses'
+      fullPath: '/responses'
+      preLoaderRoute: typeof ResponsesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  ResponsesRoute: ResponsesRoute,
   UsersRoute: UsersRoute,
   SurveySurveyIdRoute: SurveySurveyIdRoute,
   CampaignsIndexRoute: CampaignsIndexRoute,
