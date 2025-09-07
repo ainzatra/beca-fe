@@ -1,59 +1,41 @@
+# Buildspec for frontend: builds React app, builds Docker image, and pushes to ECR
+# Environment variables required (set these in CodeBuild project environment):
+# - AWS_DEFAULT_REGION (required)
+# - AWS_ACCOUNT_ID (required)
+# - ECR_REPOSITORY (required)
+# - IMAGE_TAG (optional; defaults to "latest" if not provided)
+# - PUSH_LATEST (optional; set to "true" to also push the "latest" tag)
+# - DOCKER_BUILD_ARGS (optional; extra arguments for `docker build`, e.g., "--build-arg VITE_BACKEND_URL=...")
 version: 0.2
-#
-# Required environment variables (set in CodeBuild project settings):
-# - S3_BUCKET (required) : S3 bucket name to upload the site to, e.g. my-bucket
-# - AWS_DEFAULT_REGION (required) : AWS region, e.g. us-east-1
-# - CLOUDFRONT_DISTRIBUTION_ID (optional) : when present an invalidation will be issued
-#
-env:
-  variables:
-    # You can set defaults here if desired, or leave blank to force providing via project env
-    # S3_BUCKET: ""
-    # AWS_DEFAULT_REGION: ""
-    # CLOUDFRONT_DISTRIBUTION_ID: ""
 
-cache:
-  paths:
-    - '/root/.npm/**/*'           # cache npm registry files to speed up installs
-    - 'beca-fe/node_modules/**/*' # cache frontend node_modules between builds
+# Request Node.js 22 in the build image (matches Dockerfile)
+runtime-versions:
+  nodejs: 22
 
 phases:
-  install:
-    runtime-versions:
-      nodejs: 18
-    commands:
-      - echo "Installing root-level tools (if any)"
-      - echo "Node version: $(node --version)"
-      - echo "npm version: $(npm --version)"
   pre_build:
     commands:
-      - echo "Entering frontend directory"
-      - cd beca-fe
-      - echo "Running clean install"
-      - npm ci
+      - set -eux
+      - echo "Building the frontend (Vite)..."
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+      - export IMAGE_TAG=${IMAGE_TAG:-latest}
+      - export IMAGE_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
   build:
     commands:
-      - echo "Building the frontend"
-      - npm run build
+      - echo Building Docker image from beca-fe/Dockerfile...
+      - docker build -t "$IMAGE_URI" --build-arg VITE_BACKEND_URL="$VITE_BACKEND_URL" "."
   post_build:
     commands:
-      - echo "Preparing to upload build artifacts to S3"
+      - echo Pushing Docker image $IMAGE_URI ...
+      - docker push "$IMAGE_URI"
       - |
-        if [ -z "$S3_BUCKET" ]; then
-          echo "ERROR: S3_BUCKET environment variable is not set"
-          exit 1
-        fi
-      - aws s3 sync dist/ "s3://$S3_BUCKET" --delete --acl public-read --region "$AWS_DEFAULT_REGION"
-      - |
-        if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ]; then
-          echo "Creating CloudFront invalidation for distribution: $CLOUDFRONT_DISTRIBUTION_ID"
-          aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
+        if [ "${PUSH_LATEST:-}" = "true" ]; then
+          LATEST_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:latest"
+          echo "Tagging and pushing additional tag: $LATEST_URI"
+          docker tag "$IMAGE_URI" "$LATEST_URI"
+          docker push "$LATEST_URI"
         else
-          echo "CLOUDFRONT_DISTRIBUTION_ID not set; skipping CloudFront invalidation"
+          echo "PUSH_LATEST not set to 'true' - skipping latest tag push"
         fi
-
-artifacts:
-  files:
-    - '**/*'
-  base-directory: 'beca-fe/dist'
-  discard-paths: no
+      - echo Build completed on `date`
