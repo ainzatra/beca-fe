@@ -23,6 +23,7 @@ import { Card } from '@/components/ui/card';
 import {
   CircleCheck,
   CircleCheckBig,
+  Copy,
   FileLock,
   Lock,
   Plus,
@@ -41,6 +42,7 @@ import type { CampaignPhase } from '@/components/CampaignCard';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/utils/utils';
 import { toast } from 'sonner';
+import { useUserStore } from '@/stores/useUserStore';
 
 export interface Survey {
   id: string;
@@ -79,6 +81,8 @@ export default function SurveyBuilderPage({
   const [isFinalized, setIsFinalized] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
+  const { user } = useUserStore();
+  const isSurveyor = user?.role === 'SURVEYOR';
 
   // Set first survey as the default survey to display
   useEffect(() => {
@@ -235,6 +239,12 @@ export default function SurveyBuilderPage({
     saveMutation.mutate(payload);
   };
 
+  const copyLink = async () => {
+    const link = `${import.meta.env.VITE_HOST_URL}/survey/${survey?.id}`;
+    await navigator.clipboard.writeText(link);
+    toast.success('Survey link copied!');
+  };
+
   return (
     <div className="mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -274,7 +284,21 @@ export default function SurveyBuilderPage({
                 </div>
                 <div className="flex w-full flex-wrap gap-2 items-center">
                   <div className="flex-1">
-                    <CreateSurveySheet phase={phase} campaignId={campaignId} />
+                    {isSurveyor ? (
+                      <Button
+                        variant="secondary"
+                        className="whitespace-nowrap w-full"
+                        disabled
+                      >
+                        <Plus />
+                        Add Survey
+                      </Button>
+                    ) : (
+                      <CreateSurveySheet
+                        phase={phase}
+                        campaignId={campaignId}
+                      />
+                    )}
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -294,6 +318,7 @@ export default function SurveyBuilderPage({
                       }}
                       variant="destructive"
                       className="flex-1"
+                      disabled={isSurveyor}
                     >
                       <Trash />
                       Delete Survey
@@ -319,16 +344,27 @@ export default function SurveyBuilderPage({
               <h2 className="text-lg font-semibold mb-2">
                 <span>Questions</span>
               </h2>
-
-              <Button
-                variant="secondary"
-                onClick={() => addQuestion()}
-                className="cursor-pointer"
-                disabled={isFinalized}
-              >
-                <Plus />
-                Add Question
-              </Button>
+              <div className="flex gap-4">
+                {survey?.isFinalized && (
+                  <Button
+                    variant="outline"
+                    onClick={() => copyLink()}
+                    disabled={!isFinalized}
+                  >
+                    <Copy />
+                    Copy Link
+                  </Button>
+                )}
+                <Button
+                  variant="secondary"
+                  onClick={() => addQuestion()}
+                  className="cursor-pointer"
+                  disabled={isFinalized || isSurveyor}
+                >
+                  <Plus />
+                  Add Question
+                </Button>
+              </div>
             </div>
             <div>
               {questions.length === 0 && (
@@ -363,7 +399,7 @@ export default function SurveyBuilderPage({
                   onClick={() => addQuestion()}
                   variant="secondary"
                   className="cursor-pointer w-full sm:w-max"
-                  disabled={isFinalized}
+                  disabled={isFinalized || isSurveyor}
                 >
                   <Plus />
                   Add Question
@@ -380,7 +416,7 @@ export default function SurveyBuilderPage({
                     }}
                     variant="default"
                     className="cursor-pointer w-full sm:w-max"
-                    disabled={isFinalized}
+                    disabled={isFinalized || isSurveyor}
                   >
                     <Save />
                     Save Survey
@@ -391,7 +427,7 @@ export default function SurveyBuilderPage({
                       <Button
                         variant="ghost"
                         className="border border-accent w-full sm:w-max"
-                        disabled={isFinalized}
+                        disabled={isFinalized || isSurveyor}
                       >
                         <CircleCheckBig />
                         Finalize Survey

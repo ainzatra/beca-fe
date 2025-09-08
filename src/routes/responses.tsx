@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/utils/utils';
@@ -14,19 +14,37 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import { useUserStore } from '@/stores/useUserStore';
 
 export const Route = createFileRoute('/responses')({
   component: RouteComponent,
+  beforeLoad: () => {
+    const user = useUserStore.getState().user;
+
+    if (!user) {
+      throw redirect({
+        to: '/login',
+      });
+    }
+
+    if (user.role === 'SURVEYOR') {
+      throw redirect({
+        to: '/not-found',
+      });
+    }
+  },
 });
 
 const PHASES = ['PRE', 'MID', 'POST'] as const;
 type Phase = (typeof PHASES)[number];
 
 function RouteComponent() {
+  const { campaign, phase }: { campaign: string; phase: Phase } =
+    Route.useSearch();
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
-    null,
+    campaign ?? null,
   );
-  const [selectedPhase, setSelectedPhase] = useState<Phase>('PRE');
+  const [selectedPhase, setSelectedPhase] = useState<Phase>(phase ?? 'PRE');
   const [selectedSurveyId, setSelectedSurveyId] = useState<string | null>(null);
 
   const {

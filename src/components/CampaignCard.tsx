@@ -68,7 +68,8 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
       <CardFooter className="gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           <Link
-            to={campaign.id}
+            to="/campaigns/$campaignId"
+            params={{ campaignId: campaign.id }}
             className="inline-block"
             aria-label={`Open campaign ${campaign.title}`}
           >
@@ -76,9 +77,9 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
               Open
             </Button>
           </Link>
-          <Button size="sm" variant="ghost">
+          {/* <Button size="sm" variant="ghost">
             Duplicate
-          </Button>
+          </Button> */}
         </div>
 
         <div className="ml-auto text-xs text-muted-foreground">

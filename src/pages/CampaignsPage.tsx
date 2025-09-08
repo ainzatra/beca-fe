@@ -8,9 +8,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/utils/utils';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { useUserStore } from '@/stores/useUserStore';
 
 export default function CampaignGrid() {
   const queryClient = useQueryClient();
+  const { user } = useUserStore();
+  const isSurveyor = user?.role === 'SURVEYOR';
   const {
     data: campaigns = [],
     isLoading,
@@ -59,7 +63,13 @@ export default function CampaignGrid() {
         </div>
 
         <div className="flex items-center gap-2">
-          <CreateCampaignModal onCreate={handleCreate} />
+          {isSurveyor ? (
+            <Button variant="default" className="whitespace-nowrap" disabled>
+              Create New Campaign
+            </Button>
+          ) : (
+            <CreateCampaignModal onCreate={handleCreate} />
+          )}
         </div>
       </div>
 

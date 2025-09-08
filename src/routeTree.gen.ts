@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as ResponsesRouteImport } from './routes/responses'
+import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -29,6 +30,11 @@ const UsersRoute = UsersRouteImport.update({
 const ResponsesRoute = ResponsesRouteImport.update({
   id: '/responses',
   path: '/responses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotFoundRoute = NotFoundRouteImport.update({
+  id: '/not-found',
+  path: '/not-found',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/not-found': typeof NotFoundRoute
   '/responses': typeof ResponsesRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/not-found': typeof NotFoundRoute
   '/responses': typeof ResponsesRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/not-found': typeof NotFoundRoute
   '/responses': typeof ResponsesRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/not-found'
     | '/responses'
     | '/users'
     | '/survey/$surveyId'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/not-found'
     | '/responses'
     | '/users'
     | '/survey/$surveyId'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/not-found'
     | '/responses'
     | '/users'
     | '/survey/$surveyId'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  NotFoundRoute: typeof NotFoundRoute
   ResponsesRoute: typeof ResponsesRoute
   UsersRoute: typeof UsersRoute
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
@@ -189,6 +202,13 @@ declare module '@tanstack/react-router' {
       path: '/responses'
       fullPath: '/responses'
       preLoaderRoute: typeof ResponsesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/not-found': {
+      id: '/not-found'
+      path: '/not-found'
+      fullPath: '/not-found'
+      preLoaderRoute: typeof NotFoundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  NotFoundRoute: NotFoundRoute,
   ResponsesRoute: ResponsesRoute,
   UsersRoute: UsersRoute,
   SurveySurveyIdRoute: SurveySurveyIdRoute,

@@ -12,6 +12,7 @@ import type { Campaign } from '@/components/CampaignCard';
 import CampaignManagementSheet from '@/components/CampaignManagementSheet';
 import { checkPhasesCompleted } from '@/utils/utils';
 import type { CampaignDetails } from '@/pages/CampaignDetailPage';
+import { useUserStore } from '@/stores/useUserStore';
 
 export default function CampaignHeader({
   campaign,
@@ -21,6 +22,9 @@ export default function CampaignHeader({
   const created = campaign.createdAt
     ? new Date(campaign.createdAt).toLocaleString()
     : '—';
+
+  const { user } = useUserStore();
+  const isSurveyor = user?.role === 'SURVEYOR';
 
   return (
     <Card className="mb-4">
@@ -61,7 +65,10 @@ export default function CampaignHeader({
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-start gap-2">
                 {checkPhasesCompleted(campaign.activePhase, campaign.status) !==
-                  3 && <CampaignManagementSheet campaign={campaign} />}
+                  3 &&
+                  !isSurveyor && (
+                    <CampaignManagementSheet campaign={campaign} />
+                  )}
               </div>
             </div>
           </div>

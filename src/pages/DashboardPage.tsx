@@ -22,10 +22,13 @@ import { Link } from '@tanstack/react-router';
 import { api } from '@/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useUserStore } from '@/stores/useUserStore';
 
 export function DashboardPage() {
   // Replace these with real data hooks (TanStack Query) later.
   const queryClient = useQueryClient();
+  const { user } = useUserStore();
+  const isSurveyor = user?.role === 'SURVEYOR';
   const {
     data: campaigns = [],
     isLoading,
@@ -42,6 +45,20 @@ export function DashboardPage() {
 
       return await response.json();
     },
+  });
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: async () => {
+      const response = await api('/campaign/dashboard', true);
+
+      if (!response.ok) {
+        toast.error('Error fetching the campaigns');
+        throw new Error('Failed to fetch campaigns');
+      }
+
+      return await response.json();
+    },
+    refetchOnMount: 'always',
   });
 
   const mutation = useMutation({
@@ -75,11 +92,11 @@ export function DashboardPage() {
     topIssues: [],
   };
 
-  const stats = {
-    totalCampaigns: campaigns.length,
-    totalResponses: analytics.totalResponses,
-    surveyors: 12, // mock - replace with real
-  };
+  // const stats = {
+  //   totalCampaigns: campaigns.length,
+  //   totalResponses: analytics.totalResponses,
+  //   surveyors: 12, // mock - replace with real
+  // };
 
   return (
     <div className="bg-white rounded-xl p-4 space-y-6">
@@ -92,7 +109,13 @@ export function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <CreateCampaignModal onCreate={handleCreate} />
+          {isSurveyor ? (
+            <Button variant="default" className="whitespace-nowrap" disabled>
+              Create New Campaign
+            </Button>
+          ) : (
+            <CreateCampaignModal onCreate={handleCreate} />
+          )}
           <Link to="/campaigns" className="inline-block">
             <Button size="sm" variant="outline">
               View all campaigns
@@ -104,21 +127,21 @@ export function DashboardPage() {
       {/* Key stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
-          value={stats.totalCampaigns}
+          value={stats?.campaignCount.total}
           title="Total Campaigns"
           subtitle={<div className="text-xs">Active, draft and completed</div>}
           className="bg-gradient-to-br from-indigo-600 to-sky-500"
         />
 
         <StatCard
-          value={stats.totalResponses}
+          value={stats?.responseCount}
           title="Total Responses"
           subtitle={<div className="text-xs">Across all campaigns</div>}
           className="bg-gradient-to-br from-blue-700 to-emerald-500"
         />
 
         <StatCard
-          value={stats.surveyors}
+          value={stats?.surveyorCount}
           title="Active Surveyors"
           subtitle={<div className="text-xs">Field enumerators online</div>}
           className="bg-gradient-to-br from-emerald-600 to-emerald-400"
@@ -129,7 +152,7 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>📋 Recent Campaigns</CardTitle>
+            <CardTitle>Recent Campaigns</CardTitle>
             <CardDescription>
               Quick access to the most recent campaigns and their progress
             </CardDescription>
@@ -143,7 +166,7 @@ export function DashboardPage() {
             </div>
           </CardContent>
 
-          <CardFooter>
+          {/* <CardFooter>
             <div className="flex items-center gap-2">
               <Link to="/campaigns" className="inline-block">
                 <Button size="sm">Manage campaigns</Button>
@@ -152,40 +175,37 @@ export function DashboardPage() {
                 Showing {Math.min(4, campaigns.length)} of {campaigns.length}
               </div>
             </div>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
 
         <Card>
-          {/* <CardHeader>
-            <CardTitle>📊 Analytics Snapshot</CardTitle>
+          <CardHeader>
+            <CardTitle>Phase progress (all campaigns)</CardTitle>
             <CardDescription>
               High-level sentiment and response metrics
             </CardDescription>
-          </CardHeader> */}
+          </CardHeader>
 
           <CardContent>
             {/* <AnalyticsStats data={analytics} /> */}
 
             <div className="mt-4">
-              <div className="font-semibold mb-2">
-                Phase progress (all campaigns)
-              </div>
               <div className="grid grid-cols-1 gap-2">
                 <ProgressCard
                   title="Pre-Campaign"
-                  count={75}
+                  count={stats?.campaignCount.PRE}
                   from="#10b981"
                   to="#059669"
                 />
                 <ProgressCard
                   title="Mid-Campaign"
-                  count={60}
+                  count={stats?.campaignCount.MID}
                   from="#fb923c"
                   to="#f97316"
                 />
                 <ProgressCard
                   title="Post-Campaign"
-                  count={40}
+                  count={stats?.campaignCount.POST}
                   from="#8b5cf6"
                   to="#6d28d9"
                 />
@@ -206,9 +226,9 @@ export function DashboardPage() {
         </Card>
       </div>
 
-      <PrescriptivePanel />
+      {/* <PrescriptivePanel /> */}
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>💬 Live Updates</CardTitle>
           <CardDescription>Recent activity across campaigns</CardDescription>
@@ -243,7 +263,7 @@ export function DashboardPage() {
             </Button>
           </div>
         </CardFooter>
-      </Card>
+      </Card> */}
     </div>
   );
 }

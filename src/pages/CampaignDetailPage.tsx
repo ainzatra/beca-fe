@@ -112,6 +112,7 @@ export default function CampaignDetailPage({
                 phase={p as CampaignPhase}
                 status={campaign.activePhase === p ? 'active' : 'inactive'}
                 total={campaign.totalsByPhase[p as CampaignPhase]}
+                campaignId={campaign.id}
               />
             ))}
           </div>

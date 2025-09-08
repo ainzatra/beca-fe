@@ -13,6 +13,7 @@ import reportWebVitals from './reportWebVitals.ts';
 // Import the user store for rehydration
 import { useUserStore } from '@/stores/useUserStore';
 import { api } from './utils/utils.ts';
+import NotFoundPage from './pages/NotFoundPage.tsx';
 
 // Create a new router instance
 
@@ -26,6 +27,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultNotFoundComponent: NotFoundPage,
 });
 
 // Register the router instance for type safety

@@ -18,9 +18,15 @@ interface PhaseCardProps {
   status: PhaseStatus;
   total: PhaseTotals;
   phase: CampaignPhase;
+  campaignId: string;
 }
 
-export default function PhaseCard({ status, total, phase }: PhaseCardProps) {
+export default function PhaseCard({
+  status,
+  total,
+  phase,
+  campaignId,
+}: PhaseCardProps) {
   const statusColor =
     status === 'active'
       ? 'bg-emerald-100 text-emerald-800'
@@ -60,7 +66,11 @@ export default function PhaseCard({ status, total, phase }: PhaseCardProps) {
           </Button>
         </Link>
 
-        <Link to="." className="inline-block ml-auto">
+        <Link
+          to="/responses"
+          search={{ campaign: campaignId, phase }}
+          className="inline-block ml-auto"
+        >
           <Button size="sm" variant="ghost">
             View Responses
           </Button>

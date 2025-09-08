@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/utils/utils';
 import type { Campaign, CampaignStatus } from '@/components/CampaignCard';
+import { useUserStore } from '@/stores/useUserStore';
 
 export interface CreateCampaign {
   title: string;
@@ -37,6 +38,9 @@ export default function CreateCampaignModal({
   const [description, setDescription] = React.useState('');
   const [status, setStatus] = React.useState<Campaign['status']>('DRAFT');
 
+  const { user } = useUserStore();
+  const isSurveyor = user?.role === 'SURVEYOR';
+
   const submit = () => {
     const campaign: CreateCampaign = {
       title: title,
@@ -53,7 +57,11 @@ export default function CreateCampaignModal({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="default" className="whitespace-nowrap">
+        <Button
+          variant="default"
+          className="whitespace-nowrap"
+          disabled={isSurveyor}
+        >
           Create New Campaign
         </Button>
       </SheetTrigger>

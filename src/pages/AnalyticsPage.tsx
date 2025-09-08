@@ -21,12 +21,11 @@ type AnalyticsData = {
 };
 
 export default function AnalyticsPage() {
-  const [selectedCampaign, setSelectedCampaign] = useState('all');
+  const [selectedCampaign, setSelectedCampaign] = useState('campaign-1');
   const [dateRange, setDateRange] = useState('30');
 
   // Replace with the actual API Response from backend
   const campaigns = [
-    { id: 'all', title: 'All Campaigns' },
     { id: 'campaign-1', title: 'Campaign 1' },
     { id: 'campaign-2', title: 'Campaign 2' },
   ];

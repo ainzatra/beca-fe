@@ -14,6 +14,7 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table';
+import ResponsePreview from '@/components/ResponsePreview';
 import {
   Pagination,
   PaginationContent,
@@ -71,14 +72,14 @@ export default function ResponsesTable({
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-          const id = row.original.id;
+          const rec = row.original;
           return (
-            <a
-              className="text-sm text-primary underline"
-              href={`/response/${id}`}
+            <button
+              className=" cursor-pointer text-sm text-primary underline"
+              onClick={() => setSelected(rec)}
             >
               View
-            </a>
+            </button>
           );
         },
       },
@@ -88,6 +89,7 @@ export default function ResponsesTable({
 
   const [pageSize, setPageSize] = useState<number>(initialPageSize);
   const [pageIndex, setPageIndex] = useState<number>(0);
+  const [selectedResponse, setSelected] = useState<ResponseRecord | null>(null);
 
   const table = useReactTable({
     data: responses,
@@ -211,6 +213,12 @@ export default function ResponsesTable({
       <div className="text-sm text-muted-foreground">
         Showing page {current + 1} of {pageCount} — {responses.length} responses
       </div>
+
+      <ResponsePreview
+        response={selectedResponse}
+        open={!!selectedResponse}
+        onClose={() => setSelected(null)}
+      />
     </div>
   );
 }

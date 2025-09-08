@@ -1,7 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import images from '@/constants/images';
 import { DashboardPage } from '@/pages/DashboardPage';
 import Header from '@/components/Header';
+import { useUserStore } from '@/stores/useUserStore';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 /**
  * Dashboard route composed from smaller components:

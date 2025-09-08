@@ -26,7 +26,7 @@ const items = [
   {
     title: 'Campaigns',
     url: '/campaigns',
-    isAdminOnly: true,
+    isAdminOnly: false,
     icon: FileText,
     iconColor: 'text-[#28A745]', // Green
   },
@@ -40,7 +40,7 @@ const items = [
   {
     title: 'Responses',
     url: '/responses',
-    isAdminOnly: false,
+    isAdminOnly: true,
     icon: MessageSquare,
     iconColor: 'text-[#FFA500]', // Orange
   },
@@ -88,7 +88,7 @@ export function AppSidebar() {
                 state.location.pathname === item.url ||
                 state.location.pathname.startsWith(item.url + '/');
               // hide admin-only items if user is not admin
-              // if (item.isAdminOnly && user.role !== 'admin') return null;
+              if (item.isAdminOnly && user?.role === 'SURVEYOR') return null;
 
               return (
                 <SidebarMenuItem key={item.title}>
