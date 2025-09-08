@@ -25,7 +25,6 @@ export default function SentimentTrend({ data }: { data: AnalyticsData }) {
 
   const trendData: TrendDatum[] = [
     { phase: 'Pre-Campaign', positive: 30, neutral: 40, negative: 30 },
-    { phase: 'Launch', positive: 45, neutral: 30, negative: 25 },
     { phase: 'Mid-Campaign', positive: 40, neutral: 38, negative: 22 },
     {
       phase: data.phase ?? 'Latest',

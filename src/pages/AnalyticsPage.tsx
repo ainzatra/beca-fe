@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
     negative: 35,
     confidence: 78,
     lastSurveyName: 'Pre-Campaign — Carmen Lopez',
-    phase: 'Pre-Campaign',
+    phase: 'Post-Campaign',
     topIssues: [
       {
         issue: 'Healthcare affordability',
