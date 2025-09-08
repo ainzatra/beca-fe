@@ -7,6 +7,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 ARG VITE_BACKEND_URL
+ARG VITE_HOST_URL
 
 # copy source and build
 COPY . .
