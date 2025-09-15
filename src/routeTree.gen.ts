@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ResponsesRouteImport } from './routes/responses'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as LoginRouteImport } from './routes/login'
@@ -25,6 +26,11 @@ import { Route as CampaignsCampaignIdPhaseSurveyRouteImport } from './routes/cam
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResponsesRoute = ResponsesRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/responses': typeof ResponsesRoute
+  '/settings': typeof SettingsRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/responses': typeof ResponsesRoute
+  '/settings': typeof SettingsRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/responses': typeof ResponsesRoute
+  '/settings': typeof SettingsRoute
   '/users': typeof UsersRoute
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns/': typeof CampaignsIndexRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/not-found'
     | '/responses'
+    | '/settings'
     | '/users'
     | '/survey/$surveyId'
     | '/campaigns'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/not-found'
     | '/responses'
+    | '/settings'
     | '/users'
     | '/survey/$surveyId'
     | '/campaigns'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/not-found'
     | '/responses'
+    | '/settings'
     | '/users'
     | '/survey/$surveyId'
     | '/campaigns/'
@@ -181,6 +193,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NotFoundRoute: typeof NotFoundRoute
   ResponsesRoute: typeof ResponsesRoute
+  SettingsRoute: typeof SettingsRoute
   UsersRoute: typeof UsersRoute
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
   CampaignsIndexRoute: typeof CampaignsIndexRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/responses': {
@@ -285,6 +305,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NotFoundRoute: NotFoundRoute,
   ResponsesRoute: ResponsesRoute,
+  SettingsRoute: SettingsRoute,
   UsersRoute: UsersRoute,
   SurveySurveyIdRoute: SurveySurveyIdRoute,
   CampaignsIndexRoute: CampaignsIndexRoute,

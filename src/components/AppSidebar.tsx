@@ -1,4 +1,11 @@
-import { Home, FileText, BarChart2, MessageSquare, Users } from 'lucide-react';
+import {
+  Home,
+  FileText,
+  BarChart2,
+  MessageSquare,
+  Users,
+  Settings,
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarHeader,
@@ -51,6 +58,13 @@ const items = [
     icon: Users,
     iconColor: 'text-[#DC3545]', // Red
   },
+  {
+    title: 'Settings',
+    url: '/settings',
+    isAdminOnly: false,
+    icon: Settings,
+    iconColor: 'text-[#0d6efd]', // Blue
+  },
 ];
 
 export function AppSidebar() {
@@ -68,11 +82,12 @@ export function AppSidebar() {
     setUser(null);
     navigate({ to: '/' });
   };
+
   return (
     <Sidebar className="px-4 py-6">
       <SidebarHeader>
         <div className="bg-gradient-to-r from-white to-slate-50 rounded-md p-3 shadow-inner">
-          <div className="text-sm font-semibold">{user?.username}</div>
+          <div className="text-sm font-semibold">{user?.name}</div>
           <div className="text-xs text-muted-foreground">
             {user?.role?.toUpperCase()}
           </div>

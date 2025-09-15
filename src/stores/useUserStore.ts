@@ -3,10 +3,12 @@ import { create } from 'zustand';
 export type UserRole = 'SURVEYOR' | 'ADMIN' | 'SUPERADMIN';
 
 export type User = {
-  id: string | null;
-  username: string | null;
-  role: UserRole | null;
-  token: string | null;
+  id: string;
+  username: string;
+  role: UserRole;
+  token: string;
+  name: string;
+  email: string;
 };
 
 interface UserStore {

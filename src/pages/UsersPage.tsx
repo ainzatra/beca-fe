@@ -21,6 +21,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/utils/utils';
 import { useUserStore } from '@/stores/useUserStore';
+import { toast } from 'sonner';
 
 type Role = 'ADMIN' | 'SURVEYOR';
 
@@ -59,14 +60,21 @@ export default function UsersPage() {
         method: 'POST',
         body: JSON.stringify(payload),
       }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['users'] });
+    onSuccess: async (res) => {
+      if (res.status === 200 || res.status === 201) {
+        toast.success('User created successfully');
+        qc.invalidateQueries({ queryKey: ['users'] });
+        return;
+      }
+      const result = await res.json();
+      toast.error(result.message);
     },
   });
   const [showForm, setShowForm] = useState(false);
 
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [role, setRole] = useState<Role>('SURVEYOR');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -82,6 +90,7 @@ export default function UsersPage() {
   function resetForm() {
     setName('');
     setUsername('');
+    setEmail('');
     setRole('SURVEYOR');
     setPassword('');
     setConfirm('');
@@ -94,14 +103,25 @@ export default function UsersPage() {
       setError('Please fill required fields');
       return;
     }
+
+    // email validation (trim and simple regex)
+    const emailTrimmed = email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailTrimmed || !emailRegex.test(emailTrimmed)) {
+      setError('Please provide a valid email address');
+      return;
+    }
+
     if (password !== confirm) {
       setError('Passwords do not match');
       return;
     }
+
     const payload = {
       name,
       username,
       role,
+      email: emailTrimmed,
       password,
       confirm_password: confirm,
     };
@@ -132,7 +152,7 @@ export default function UsersPage() {
 
         {showForm && (
           <div className="mb-4 p-4 border rounded">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -150,6 +170,17 @@ export default function UsersPage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Username"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  value={email}
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
                 />
               </div>
 
