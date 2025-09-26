@@ -9,25 +9,26 @@ export type AnalyticsData = {
   topIssues?: any[];
 };
 
-export default function AnalyticsStats({ data }: { data: AnalyticsData }) {
+export default function AnalyticsStats({ data }) {
+  const report = data.report;
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <StatCard
-        value={data.totalResponses}
+        value={report.totalResponses}
         title="Total Responses"
         subtitle={<div className="text-xs">Across selected campaign</div>}
         className="bg-gradient-to-br from-blue-700 to-emerald-500"
       />
 
       <StatCard
-        value={data.positive}
+        value={report.positive}
         title="Positive Sentiment"
         subtitle={<div className="text-xs">Based on AI sentiment</div>}
         className="bg-gradient-to-br from-emerald-600 to-emerald-400"
       />
 
       <StatCard
-        value={data.negative}
+        value={report.negative}
         title="Negative Sentiment"
         subtitle={<div className="text-xs">Issues & concerns</div>}
         className="bg-gradient-to-br from-red-600 to-rose-500"

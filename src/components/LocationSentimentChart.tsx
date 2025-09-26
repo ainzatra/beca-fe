@@ -45,7 +45,7 @@ export default function LocationSentimentChart({
       </CardHeader>
 
       <CardContent>
-        <div className="h-48">
+        <div className="max-h-4/5">
           <ChartContainer config={mergedConfig} className="h-full w-full">
             <BarChart accessibilityLayer data={data}>
               <CartesianGrid vertical={false} />

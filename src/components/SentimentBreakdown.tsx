@@ -1,17 +1,10 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
-export type AnalyticsData = {
-  totalResponses: number;
-  positive: number;
-  neutral: number;
-  negative: number;
-};
-
-export default function SentimentBreakdown({ data }: { data: AnalyticsData }) {
-  const total = Math.max(1, data.totalResponses);
-  const positivePct = Math.round((data.positive / total) * 100);
-  const neutralPct = Math.round((data.neutral / total) * 100);
-  const negativePct = Math.round((data.negative / total) * 100);
+export default function SentimentBreakdown({ data }) {
+  const total = Math.max(1, data.report.totalResponses);
+  const positivePct = Math.round((data.report.positive / total) * 100);
+  const neutralPct = Math.round((data.report.neutral / total) * 100);
+  const negativePct = Math.round((data.report.negative / total) * 100);
 
   return (
     <Card>

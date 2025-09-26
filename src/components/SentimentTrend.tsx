@@ -8,14 +8,7 @@ import {
 } from '@/components/ui/chart';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
-export type AnalyticsData = {
-  positive: number;
-  neutral: number;
-  negative: number;
-  phase?: string;
-};
-
-export default function SentimentTrend({ data }: { data: AnalyticsData }) {
+export default function SentimentTrend({ data }) {
   type TrendDatum = {
     phase: string;
     positive: number;
@@ -23,16 +16,16 @@ export default function SentimentTrend({ data }: { data: AnalyticsData }) {
     negative: number;
   };
 
-  const trendData: TrendDatum[] = [
-    { phase: 'Pre-Campaign', positive: 30, neutral: 40, negative: 30 },
-    { phase: 'Mid-Campaign', positive: 40, neutral: 38, negative: 22 },
-    {
-      phase: data.phase ?? 'Latest',
-      positive: data.positive,
-      neutral: data.neutral,
-      negative: data.negative,
-    },
-  ];
+  const trendData: TrendDatum[] = [];
+
+  data.forEach((d) => {
+    trendData.unshift({
+      phase: d.phase,
+      positive: d.report.positive,
+      negative: d.report.negative,
+      neutral: d.report.neutral,
+    });
+  });
 
   const mergedConfig = {
     positive: { label: 'Positive', color: '#10B981' },
