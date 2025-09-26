@@ -28,6 +28,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
   const [editStatus, setEditStatus] = useState<CampaignStatus>('ACTIVE');
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const queryClient = useQueryClient();
+  const [isSaving, setIsSaving] = useState(false);
 
   // Initialize local edits whenever campaign changes
   useEffect(() => {
@@ -99,28 +100,34 @@ export default function CampaignManagementSheet({ campaign }: Props) {
       activePhase,
     };
 
-    const response = await api(`/campaign/${campaign.id}`, true, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
+    try {
+      setIsSaving(true);
+      const response = await api(`/campaign/${campaign.id}`, true, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
 
-    if (!response.ok) {
-      toast.error('Failed to update. Please try again later.', {
-        style: { backgroundColor: 'red', color: 'white' },
+      if (!response.ok) {
+        toast.error('Failed to update. Please try again later.', {
+          style: { backgroundColor: 'red', color: 'white' },
+          duration: 1000,
+        });
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['campaign', campaign.id] });
+      toast.success('Campaign updated successfully', {
+        style: { backgroundColor: 'limegreen', color: 'white' },
         duration: 1000,
       });
-      return;
+      setOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-
-    queryClient.invalidateQueries({ queryKey: ['campaign', campaign.id] });
-    toast.success('Campaign updated successfully', {
-      style: { backgroundColor: 'limegreen', color: 'white' },
-      duration: 1000,
-    });
-    setOpen(false);
   }
 
   function onCancel() {
+    if (isSaving) return;
     if (!campaign) {
       setOpen(false);
       return;
@@ -136,7 +143,12 @@ export default function CampaignManagementSheet({ campaign }: Props) {
 
   return (
     <div className="flex items-start gap-2">
-      <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet
+        open={open}
+        onOpenChange={(newOpen) => {
+          if (newOpen || !isSaving) setOpen(newOpen);
+        }}
+      >
         <SheetTrigger asChild>
           <Button variant="default" size="sm" onClick={() => setOpen(true)}>
             Manage Campaign
@@ -162,6 +174,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                     setEditTitle(e.target.value)
                   }
                   placeholder="Campaign title"
+                  disabled={isSaving}
                   aria-required
                 />
               </div>
@@ -176,6 +189,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                   className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-ring/50 focus-visible:border-ring"
                   rows={4}
                   placeholder="Brief description"
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -189,6 +203,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                     setEditStatus(e.target.value as CampaignStatus)
                   }
                   className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-ring/50 focus-visible:border-ring w-full"
+                  disabled={isSaving}
                 >
                   <option value={'DRAFT'}>Draft</option>
                   <option value={'ACTIVE'}>Active</option>
@@ -256,7 +271,8 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                     onClick={advancePhase}
                     disabled={
                       !currentPhaseMeetsRequirements() ||
-                      currentPhaseIndex >= derivedPhases.length - 1
+                      currentPhaseIndex >= derivedPhases.length - 1 ||
+                      isSaving
                     }
                   >
                     Advance to Next Phase
@@ -273,12 +289,15 @@ export default function CampaignManagementSheet({ campaign }: Props) {
 
           <SheetFooter>
             <div className="flex items-center gap-2 w-full">
-              <Button variant="outline" onClick={onCancel}>
+              <Button variant="outline" onClick={onCancel} disabled={isSaving}>
                 Cancel
               </Button>
               <div className="ml-auto flex items-center gap-2">
-                <Button onClick={onSave} disabled={!editTitle.trim()}>
-                  Save Changes
+                <Button
+                  onClick={onSave}
+                  disabled={!editTitle.trim() || isSaving}
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
             </div>
