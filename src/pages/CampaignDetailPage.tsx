@@ -118,12 +118,12 @@ export default function CampaignDetailPage({
           </div>
         </section>
 
-        <section aria-labelledby="analysis-heading" className="mt-4">
+        {/* <section aria-labelledby="analysis-heading" className="mt-4">
           <h3 id="analysis-heading" className="text-lg font-semibold mb-2">
             Prescriptive Analysis
           </h3>
           <PrescriptivePanel />
-        </section>
+        </section> */}
       </Card>
 
       {/* <aside className="space-y-4">
