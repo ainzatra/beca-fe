@@ -5,6 +5,7 @@ import {
   MessageSquare,
   Users,
   Settings,
+  Vote,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -36,6 +37,13 @@ const items = [
     isAdminOnly: false,
     icon: FileText,
     iconColor: 'text-[#28A745]', // Green
+  },
+  {
+    title: 'Election Results',
+    url: '/election-results',
+    isAdminOnly: true,
+    icon: Vote,
+    iconColor: 'text-[#FF6347]', // Tomato
   },
   {
     title: 'Analytics',
