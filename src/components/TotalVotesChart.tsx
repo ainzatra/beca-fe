@@ -10,8 +10,11 @@ import {
   formatCandidateName,
   type TotalVotesChartProps,
 } from './ElectionShared';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 function TotalVotesChart({ votes }: TotalVotesChartProps) {
+  const isMobile = useIsMobile();
+
   const totalVotes = Object.values(votes).reduce(
     (totals, locationVotes) => {
       Object.entries(locationVotes).forEach(([candidate, voteCount]) => {
@@ -42,7 +45,10 @@ function TotalVotesChart({ votes }: TotalVotesChartProps) {
         <CardTitle>Total Votes Per Candidate</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-80 w-full">
+        <ChartContainer
+          config={chartConfig}
+          className={isMobile ? 'h-96 w-full' : 'h-80 w-full'}
+        >
           <PieChart>
             <Pie
               data={chartData}
@@ -50,7 +56,7 @@ function TotalVotesChart({ votes }: TotalVotesChartProps) {
               nameKey="candidate"
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={isMobile ? 70 : 100}
               fill="#8884d8"
             >
               {chartData.map((entry, index) => (
@@ -61,7 +67,10 @@ function TotalVotesChart({ votes }: TotalVotesChartProps) {
               ))}
             </Pie>
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Legend />
+            <Legend
+              layout={isMobile ? 'horizontal' : undefined}
+              verticalAlign={isMobile ? 'bottom' : undefined}
+            />
           </PieChart>
         </ChartContainer>
       </CardContent>

@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { POSITIONS, YEARS, type ElectionControlsProps } from './ElectionShared';
+import { Label } from './ui/label';
 
 function ElectionControls({
   position,
@@ -14,11 +15,11 @@ function ElectionControls({
   onYearChange,
 }: ElectionControlsProps) {
   return (
-    <div className="flex justify-start gap-4">
+    <div className="flex flex-col sm:flex-row justify-start gap-4">
       <div className="space-y-2">
-        <label className="text-sm font-medium text-white">Position</label>
+        <Label className="text-sm font-medium ">Position</Label>
         <Select value={position} onValueChange={onPositionChange}>
-          <SelectTrigger className="w-48 bg-white">
+          <SelectTrigger className="w-full sm:w-48 bg-white">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -32,9 +33,9 @@ function ElectionControls({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-white">Year</label>
+        <Label className="text-sm font-medium ">Year</Label>
         <Select value={year} onValueChange={onYearChange}>
-          <SelectTrigger className="w-32 bg-white">
+          <SelectTrigger className="w-full sm:w-32 bg-white">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
