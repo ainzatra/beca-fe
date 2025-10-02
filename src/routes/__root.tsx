@@ -50,7 +50,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           </div>
         </SidebarProvider>
         <Toaster closeButton position="top-center" duration={2000} />
-        <TanstackDevtools
+        {/* <TanstackDevtools
           config={{
             position: 'bottom-right',
           }}
@@ -61,7 +61,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             },
             TanStackQueryDevtools,
           ]}
-        />
+        /> */}
       </>
     );
   },
