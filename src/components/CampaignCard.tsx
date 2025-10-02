@@ -20,6 +20,10 @@ export interface Campaign {
   createdAt?: string;
   activePhase: CampaignPhase;
   description?: string;
+  candidateName?: string;
+  candidatePosition?: string;
+  candidateParty?: string;
+  fbUrl?: string;
 }
 
 export default function CampaignCard({ campaign }: { campaign: Campaign }) {

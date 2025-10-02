@@ -12,6 +12,17 @@ import {
   SheetFooter,
   SheetClose,
 } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { api, checkPhasesCompleted } from '@/utils/utils';
 import type { CampaignStatus } from './CampaignCard';
 import { toast } from 'sonner';
@@ -27,6 +38,8 @@ export default function CampaignManagementSheet({ campaign }: Props) {
   const [editDescription, setEditDescription] = useState('');
   const [editStatus, setEditStatus] = useState<CampaignStatus>('ACTIVE');
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
+  const [confirmAdvanceOpen, setConfirmAdvanceOpen] = useState(false);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -72,22 +85,17 @@ export default function CampaignManagementSheet({ campaign }: Props) {
     if (currentPhaseIndex >= derivedPhases.length - 1) return;
     if (!currentPhaseMeetsRequirements()) return;
 
-    // eslint-disable-next-line no-alert
-    if (
-      !window.confirm(
-        'Advancing to the next phase is irreversible. Are you sure you want to continue?',
-      )
-    )
-      return;
-
     const nextIndex = currentPhaseIndex + 1;
     setCurrentPhaseIndex(nextIndex);
+    setConfirmAdvanceOpen(false);
   }
 
   async function onSave() {
     if (!editTitle.trim()) {
-      // eslint-disable-next-line no-alert
-      alert('Title is required.');
+      toast.error('Title is required.', {
+        style: { backgroundColor: 'red', color: 'white' },
+        duration: 2000,
+      });
       return;
     }
 
@@ -121,6 +129,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
         duration: 1000,
       });
       setOpen(false);
+      setConfirmSaveOpen(false);
     } finally {
       setIsSaving(false);
     }
@@ -265,18 +274,41 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                   {derivedPhases[currentPhaseIndex].name}
                 </div>
                 <div className="ml-auto text-sm">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={advancePhase}
-                    disabled={
-                      !currentPhaseMeetsRequirements() ||
-                      currentPhaseIndex >= derivedPhases.length - 1 ||
-                      isSaving
-                    }
+                  <AlertDialog
+                    open={confirmAdvanceOpen}
+                    onOpenChange={setConfirmAdvanceOpen}
                   >
-                    Advance to Next Phase
-                  </Button>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        disabled={
+                          !currentPhaseMeetsRequirements() ||
+                          currentPhaseIndex >= derivedPhases.length - 1 ||
+                          isSaving
+                        }
+                      >
+                        Advance to Next Phase
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Confirm Phase Advancement
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Advancing to the next phase is irreversible. Are you
+                          sure you want to continue?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={advancePhase}>
+                          Confirm
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
               {!currentPhaseMeetsRequirements() && (
@@ -293,12 +325,31 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                 Cancel
               </Button>
               <div className="ml-auto flex items-center gap-2">
-                <Button
-                  onClick={onSave}
-                  disabled={!editTitle.trim() || isSaving}
+                <AlertDialog
+                  open={confirmSaveOpen}
+                  onOpenChange={setConfirmSaveOpen}
                 >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </Button>
+                  <AlertDialogTrigger asChild>
+                    <Button disabled={!editTitle.trim() || isSaving}>
+                      {isSaving ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Save Changes</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to save these changes to the
+                        campaign?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={onSave}>
+                        {isSaving ? 'Saving...' : 'Confirm'}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
             <SheetClose />

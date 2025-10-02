@@ -49,6 +49,50 @@ export default function CampaignHeader({
             <CardDescription className="mt-2 text-sm text-muted-foreground">
               {campaign.description ?? 'No description provided'}
             </CardDescription>
+
+            {(campaign.candidateName ||
+              campaign.candidatePosition ||
+              campaign.candidateParty ||
+              campaign.fbUrl) && (
+              <div className="mt-4 space-y-1">
+                {campaign.candidateName && (
+                  <div className="text-sm">
+                    <span className="font-medium">Candidate:</span>{' '}
+                    {campaign.candidateName}
+                  </div>
+                )}
+                {campaign.candidatePosition && (
+                  <div className="text-sm">
+                    <span className="font-medium">Position:</span>{' '}
+                    {campaign.candidatePosition
+                      .split(' ')
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1),
+                      )
+                      .join(' ')}
+                  </div>
+                )}
+                {campaign.candidateParty && (
+                  <div className="text-sm">
+                    <span className="font-medium">Party:</span>{' '}
+                    {campaign.candidateParty}
+                  </div>
+                )}
+                {campaign.fbUrl && (
+                  <div className="text-sm">
+                    <span className="font-medium">Facebook:</span>{' '}
+                    <a
+                      href={campaign.fbUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {campaign.fbUrl}
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col items-start md:items-end gap-2">
