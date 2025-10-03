@@ -23,6 +23,7 @@ import { Route as CampaignsIndexRouteImport } from './routes/campaigns/index'
 import { Route as SurveySurveyIdRouteImport } from './routes/survey/$surveyId'
 import { Route as CampaignsCampaignIdIndexRouteImport } from './routes/campaigns/$campaignId/index'
 import { Route as CampaignsCampaignIdPhaseSurveyRouteImport } from './routes/campaigns/$campaignId/$phase/survey'
+import { Route as CampaignsCampaignIdPhaseFacebookDataRouteImport } from './routes/campaigns/$campaignId/$phase/facebook-data'
 
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
@@ -96,6 +97,12 @@ const CampaignsCampaignIdPhaseSurveyRoute =
     path: '/campaigns/$campaignId/$phase/survey',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CampaignsCampaignIdPhaseFacebookDataRoute =
+  CampaignsCampaignIdPhaseFacebookDataRouteImport.update({
+    id: '/campaigns/$campaignId/$phase/facebook-data',
+    path: '/campaigns/$campaignId/$phase/facebook-data',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
   '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
+  '/campaigns/$campaignId/$phase/facebook-data': typeof CampaignsCampaignIdPhaseFacebookDataRoute
   '/campaigns/$campaignId/$phase/survey': typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 export interface FileRoutesByTo {
@@ -127,6 +135,7 @@ export interface FileRoutesByTo {
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns': typeof CampaignsIndexRoute
   '/campaigns/$campaignId': typeof CampaignsCampaignIdIndexRoute
+  '/campaigns/$campaignId/$phase/facebook-data': typeof CampaignsCampaignIdPhaseFacebookDataRoute
   '/campaigns/$campaignId/$phase/survey': typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 export interface FileRoutesById {
@@ -144,6 +153,7 @@ export interface FileRoutesById {
   '/survey/$surveyId': typeof SurveySurveyIdRoute
   '/campaigns/': typeof CampaignsIndexRoute
   '/campaigns/$campaignId/': typeof CampaignsCampaignIdIndexRoute
+  '/campaigns/$campaignId/$phase/facebook-data': typeof CampaignsCampaignIdPhaseFacebookDataRoute
   '/campaigns/$campaignId/$phase/survey': typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 export interface FileRouteTypes {
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/survey/$surveyId'
     | '/campaigns'
     | '/campaigns/$campaignId'
+    | '/campaigns/$campaignId/$phase/facebook-data'
     | '/campaigns/$campaignId/$phase/survey'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/survey/$surveyId'
     | '/campaigns'
     | '/campaigns/$campaignId'
+    | '/campaigns/$campaignId/$phase/facebook-data'
     | '/campaigns/$campaignId/$phase/survey'
   id:
     | '__root__'
@@ -194,6 +206,7 @@ export interface FileRouteTypes {
     | '/survey/$surveyId'
     | '/campaigns/'
     | '/campaigns/$campaignId/'
+    | '/campaigns/$campaignId/$phase/facebook-data'
     | '/campaigns/$campaignId/$phase/survey'
   fileRoutesById: FileRoutesById
 }
@@ -211,6 +224,7 @@ export interface RootRouteChildren {
   SurveySurveyIdRoute: typeof SurveySurveyIdRoute
   CampaignsIndexRoute: typeof CampaignsIndexRoute
   CampaignsCampaignIdIndexRoute: typeof CampaignsCampaignIdIndexRoute
+  CampaignsCampaignIdPhaseFacebookDataRoute: typeof CampaignsCampaignIdPhaseFacebookDataRoute
   CampaignsCampaignIdPhaseSurveyRoute: typeof CampaignsCampaignIdPhaseSurveyRoute
 }
 
@@ -314,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CampaignsCampaignIdPhaseSurveyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campaigns/$campaignId/$phase/facebook-data': {
+      id: '/campaigns/$campaignId/$phase/facebook-data'
+      path: '/campaigns/$campaignId/$phase/facebook-data'
+      fullPath: '/campaigns/$campaignId/$phase/facebook-data'
+      preLoaderRoute: typeof CampaignsCampaignIdPhaseFacebookDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -331,6 +352,8 @@ const rootRouteChildren: RootRouteChildren = {
   SurveySurveyIdRoute: SurveySurveyIdRoute,
   CampaignsIndexRoute: CampaignsIndexRoute,
   CampaignsCampaignIdIndexRoute: CampaignsCampaignIdIndexRoute,
+  CampaignsCampaignIdPhaseFacebookDataRoute:
+    CampaignsCampaignIdPhaseFacebookDataRoute,
   CampaignsCampaignIdPhaseSurveyRoute: CampaignsCampaignIdPhaseSurveyRoute,
 }
 export const routeTree = rootRouteImport
