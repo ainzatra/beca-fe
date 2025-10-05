@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { FacebookPostCard } from '@/components/FacebookPostCard';
 import { api } from '@/utils/utils';
 import type { FacebookPost } from '@/types/facebook';
@@ -39,38 +41,82 @@ export function FacebookDataPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-32 w-full" />
-        ))}
-      </div>
+      <Card className="p-4">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div>Facebook Data</div>
+            <Badge variant="outline">{phase} Phase</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-32 w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <Alert>
-        <AlertDescription>
-          Error loading Facebook data: {error.message}
-        </AlertDescription>
-      </Alert>
+      <Card className="p-4">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div>Facebook Data</div>
+            <Badge variant="outline">{phase} Phase</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Alert>
+            <AlertDescription>
+              Error loading Facebook data: {error.message}
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!data || data.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p>No Facebook data available for this campaign phase.</p>
-      </div>
+      <Card className="p-4">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div>Facebook Data</div>
+            <Badge variant="outline">{phase} Phase</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">
+              No Facebook data available for this campaign phase.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Facebook Data</h1>
-      {data.map((post) => (
-        <FacebookPostCard key={post.id} post={post} />
-      ))}
-    </div>
+    <Card className="p-4">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div>Facebook Data</div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{phase} Phase</Badge>
+            <Badge variant="secondary">{data.length} Posts</Badge>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {data.map((post) => (
+            <FacebookPostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -60,9 +60,23 @@ export default function PhaseCard({
       </CardHeader>
 
       <CardFooter className="flex gap-2 flex-wrap">
-        <Link to="$phase/survey" params={{ phase }} className="inline-block">
+        <Link
+          to="/campaigns/$campaignId/$phase/survey"
+          params={{ campaignId, phase }}
+          className="inline-block"
+        >
           <Button size="sm" variant="outline">
             Edit Survey
+          </Button>
+        </Link>
+
+        <Link
+          to="/campaigns/$campaignId/$phase/facebook-data"
+          params={{ campaignId, phase }}
+          className="inline-block"
+        >
+          <Button size="sm" variant="outline">
+            Facebook Data
           </Button>
         </Link>
 
