@@ -84,7 +84,7 @@ export default function CreateCampaignModal({
 
       <SheetContent
         side="right"
-        className="max-w-md"
+        className="max-w-md flex flex-col"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <SheetHeader>
@@ -95,7 +95,7 @@ export default function CreateCampaignModal({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="p-4 flex flex-col gap-3">
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
           <label className="text-sm text-muted-foreground">
             Campaign Title
           </label>
@@ -169,7 +169,7 @@ export default function CreateCampaignModal({
           />
         </div>
 
-        <SheetFooter>
+        <SheetFooter className="mt-auto">
           <div className="flex items-center gap-2 w-full">
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
