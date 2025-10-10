@@ -84,7 +84,7 @@ export default function CreateCampaignModal({
 
       <SheetContent
         side="right"
-        className="max-w-md flex flex-col"
+        className="max-w-md flex flex-col h-full max-h-[100vh]"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <SheetHeader>
@@ -95,7 +95,7 @@ export default function CreateCampaignModal({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 pb-2">
           <label className="text-sm text-muted-foreground">
             Campaign Title
           </label>
@@ -136,7 +136,6 @@ export default function CreateCampaignModal({
             Candidate Name
           </label>
           <Input
-            placeholder="e.g. John Doe"
             value={candidateName}
             onChange={(e) => setCandidateName(e.target.value)}
           />
@@ -144,17 +143,26 @@ export default function CreateCampaignModal({
           <label className="text-sm text-muted-foreground mt-2">
             Candidate Position
           </label>
-          <Input
-            placeholder="e.g. Mayor"
+          <Select
             value={candidatePosition}
-            onChange={(e) => setCandidatePosition(e.target.value)}
-          />
+            onValueChange={setCandidatePosition}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select position" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="mayor">Mayor</SelectItem>
+              <SelectItem value="vice mayor">Vice Mayor</SelectItem>
+              <SelectItem value="sangguniang bayan">
+                Sangguniang Bayan
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
           <label className="text-sm text-muted-foreground mt-2">
             Candidate Party
           </label>
           <Input
-            placeholder="e.g. Democratic Party"
             value={candidateParty}
             onChange={(e) => setCandidateParty(e.target.value)}
           />
@@ -162,14 +170,10 @@ export default function CreateCampaignModal({
           <label className="text-sm text-muted-foreground mt-2">
             Facebook URL
           </label>
-          <Input
-            placeholder="e.g. https://facebook.com/johndoe"
-            value={fbUrl}
-            onChange={(e) => setFbUrl(e.target.value)}
-          />
+          <Input value={fbUrl} onChange={(e) => setFbUrl(e.target.value)} />
         </div>
 
-        <SheetFooter className="mt-auto">
+        <SheetFooter className="mt-auto p-4 pt-0">
           <div className="flex items-center gap-2 w-full">
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
