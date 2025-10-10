@@ -8,6 +8,13 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function DefaultInfoSection({
   values,
@@ -46,11 +53,30 @@ export default function DefaultInfoSection({
 
           <div>
             <Label>Address</Label>
-            <Input
-              placeholder="Barangay, City, Province"
+            <Select
               value={values.address || ''}
-              onChange={(e) => onChange({ ...values, address: e.target.value })}
-            />
+              onValueChange={(value) => onChange({ ...values, address: value })}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select address" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="BONGA MAYOR">BONGA MAYOR</SelectItem>
+                <SelectItem value="BONGA MENOR">BONGA MENOR</SelectItem>
+                <SelectItem value="BUISAN">BUISAN</SelectItem>
+                <SelectItem value="CAMACHILIHAN">CAMACHILIHAN</SelectItem>
+                <SelectItem value="CAMBAOG">CAMBAOG</SelectItem>
+                <SelectItem value="CATACTE">CATACTE</SelectItem>
+                <SelectItem value="LICIADA">LICIADA</SelectItem>
+                <SelectItem value="MALAMIG">MALAMIG</SelectItem>
+                <SelectItem value="MALAWAK">MALAWAK</SelectItem>
+                <SelectItem value="POBLACION">POBLACION</SelectItem>
+                <SelectItem value="SAN PEDRO">SAN PEDRO</SelectItem>
+                <SelectItem value="TALAMPAS">TALAMPAS</SelectItem>
+                <SelectItem value="TANAWAN">TANAWAN</SelectItem>
+                <SelectItem value="TIBAGAN">TIBAGAN</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

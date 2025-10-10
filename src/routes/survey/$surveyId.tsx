@@ -16,6 +16,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute('/survey/$surveyId')({
@@ -343,28 +350,53 @@ function RouteComponent() {
                         />
                       </div>
 
-                      <div className="md:col-span-2">
+                      <div className="">
                         <Label htmlFor="respondent_address" className="text-xs">
                           Address
                         </Label>
-                        <Input
-                          id="respondent_address"
-                          className="mt-1"
+                        <Select
                           value={respondent.address}
-                          onChange={(e) =>
+                          onValueChange={(value) =>
                             setRespondent((r) => ({
                               ...r,
-                              address: (e.target as HTMLInputElement).value,
+                              address: value,
                             }))
                           }
-                          placeholder="Address"
-                          name="respondent_address"
-                        />
+                        >
+                          <SelectTrigger
+                            id="respondent_address"
+                            className="mt-1 w-full"
+                          >
+                            <SelectValue placeholder="Select address" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="BONGA MAYOR">
+                              BONGA MAYOR
+                            </SelectItem>
+                            <SelectItem value="BONGA MENOR">
+                              BONGA MENOR
+                            </SelectItem>
+                            <SelectItem value="BUISAN">BUISAN</SelectItem>
+                            <SelectItem value="CAMACHILIHAN">
+                              CAMACHILIHAN
+                            </SelectItem>
+                            <SelectItem value="CAMBAOG">CAMBAOG</SelectItem>
+                            <SelectItem value="CATACTE">CATACTE</SelectItem>
+                            <SelectItem value="LICIADA">LICIADA</SelectItem>
+                            <SelectItem value="MALAMIG">MALAMIG</SelectItem>
+                            <SelectItem value="MALAWAK">MALAWAK</SelectItem>
+                            <SelectItem value="POBLACION">POBLACION</SelectItem>
+                            <SelectItem value="SAN PEDRO">SAN PEDRO</SelectItem>
+                            <SelectItem value="TALAMPAS">TALAMPAS</SelectItem>
+                            <SelectItem value="TANAWAN">TANAWAN</SelectItem>
+                            <SelectItem value="TIBAGAN">TIBAGAN</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
 
-                      <div className="md:col-span-2">
+                      <div className="">
                         <Label htmlFor="respondent_id" className="text-xs">
-                          ID Reference (for now, text)
+                          ID Reference
                         </Label>
                         <Input
                           id="respondent_id"

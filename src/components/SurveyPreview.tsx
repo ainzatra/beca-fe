@@ -8,6 +8,13 @@ import {
 import { Input } from '@/components/ui/input';
 import type { Question } from '@/utils/surveyUtils';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 type SurveyPreviewProps = {
   title: string;
@@ -45,6 +52,7 @@ export default function SurveyPreview({
             {defaultInfo.contact
               ? `Contact: ${defaultInfo.contact}`
               : 'Contact: —'}
+            {defaultInfo.address ? ` • Address: ${defaultInfo.address}` : ''}
           </div>
         </div>
 
