@@ -82,7 +82,7 @@ export default function SurveyBuilderPage({
 
   const queryClient = useQueryClient();
   const { user } = useUserStore();
-  const isSurveyor = user?.role === 'SURVEYOR';
+  const isNotSurveyor = user?.role !== 'SURVEYOR';
 
   // Set first survey as the default survey to display
   useEffect(() => {
@@ -284,16 +284,7 @@ export default function SurveyBuilderPage({
                 </div>
                 <div className="flex w-full flex-wrap gap-2 items-center">
                   <div className="flex-1">
-                    {isSurveyor ? (
-                      <Button
-                        variant="secondary"
-                        className="whitespace-nowrap w-full"
-                        disabled
-                      >
-                        <Plus />
-                        Add Survey
-                      </Button>
-                    ) : (
+                    {isNotSurveyor && (
                       <CreateSurveySheet
                         phase={phase}
                         campaignId={campaignId}
@@ -302,27 +293,28 @@ export default function SurveyBuilderPage({
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Button
-                      onClick={() => {
-                        if (!survey?.id) {
-                          toast.error('No survey selected');
-                          return;
-                        }
-                        if (
-                          !confirm(
-                            'Are you sure you want to delete this survey? This action cannot be undone.',
+                    {isNotSurveyor && (
+                      <Button
+                        onClick={() => {
+                          if (!survey?.id) {
+                            toast.error('No survey selected');
+                            return;
+                          }
+                          if (
+                            !confirm(
+                              'Are you sure you want to delete this survey? This action cannot be undone.',
+                            )
                           )
-                        )
-                          return;
-                        deleteMutation.mutate();
-                      }}
-                      variant="destructive"
-                      className="flex-1"
-                      disabled={isSurveyor}
-                    >
-                      <Trash />
-                      Delete Survey
-                    </Button>
+                            return;
+                          deleteMutation.mutate();
+                        }}
+                        variant="destructive"
+                        className="flex-1"
+                      >
+                        <Trash />
+                        Delete Survey
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -334,6 +326,7 @@ export default function SurveyBuilderPage({
             <Input
               value={surveyTitle}
               onChange={(e) => setSurveyTitle(e.target.value)}
+              readOnly={isFinalized || !isNotSurveyor}
             />
           </div>
 
@@ -355,15 +348,18 @@ export default function SurveyBuilderPage({
                     Copy Link
                   </Button>
                 )}
-                <Button
-                  variant="secondary"
-                  onClick={() => addQuestion()}
-                  className="cursor-pointer"
-                  disabled={isFinalized || isSurveyor}
-                >
-                  <Plus />
-                  Add Question
-                </Button>
+                {isFinalized ||
+                  (isNotSurveyor && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => addQuestion()}
+                      className="cursor-pointer"
+                      disabled={isFinalized}
+                    >
+                      <Plus />
+                      Add Question
+                    </Button>
+                  ))}
               </div>
             </div>
             <div>
@@ -395,43 +391,52 @@ export default function SurveyBuilderPage({
                 ),
               )}
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-2">
-                <Button
-                  onClick={() => addQuestion()}
-                  variant="secondary"
-                  className="cursor-pointer w-full sm:w-max"
-                  disabled={isFinalized || isSurveyor}
-                >
-                  <Plus />
-                  Add Question
-                </Button>
+                {isFinalized ||
+                  (isNotSurveyor && (
+                    <Button
+                      onClick={() => addQuestion()}
+                      variant="secondary"
+                      className="cursor-pointer w-full sm:w-max"
+                      disabled={isFinalized}
+                    >
+                      <Plus />
+                      Add Question
+                    </Button>
+                  ))}
 
                 <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-max">
-                  <Button
-                    onClick={() => {
-                      if (!survey?.id) {
-                        toast.error('No survey selected');
-                        return;
-                      }
-                      saveSurvey();
-                    }}
-                    variant="default"
-                    className="cursor-pointer w-full sm:w-max"
-                    disabled={isFinalized || isSurveyor}
-                  >
-                    <Save />
-                    Save Survey
-                  </Button>
+                  {isFinalized ||
+                    (isNotSurveyor && (
+                      <Button
+                        onClick={() => {
+                          if (!survey?.id) {
+                            toast.error('No survey selected');
+                            return;
+                          }
+                          saveSurvey();
+                        }}
+                        variant="default"
+                        className="cursor-pointer w-full sm:w-max"
+                        disabled={isFinalized}
+                      >
+                        <Save />
+                        Save Survey
+                      </Button>
+                    ))}
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="border border-accent w-full sm:w-max"
-                        disabled={isFinalized || isSurveyor}
-                      >
-                        <CircleCheckBig />
-                        Finalize Survey
-                      </Button>
+                      {isFinalized ||
+                        (isNotSurveyor && (
+                          <Button
+                            variant="ghost"
+                            className="border border-accent w-full sm:w-max"
+                            disabled={isFinalized}
+                          >
+                            <CircleCheckBig />
+                            Finalize Survey
+                          </Button>
+                        ))}
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
