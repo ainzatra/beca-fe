@@ -166,14 +166,14 @@ export default function CampaignManagementSheet({ campaign }: Props) {
 
         <SheetContent
           side="right"
-          className="w-full sm:max-w-md"
+          className="w-full sm:max-w-md flex flex-col h-full max-h-[100vh]"
           onInteractOutside={(e) => e.preventDefault()}
         >
           <SheetHeader>
             <SheetTitle>Manage Campaign</SheetTitle>
           </SheetHeader>
 
-          <div className="p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-2">
             <div>
               <label className="text-sm font-medium">Title</label>
               <div className="mt-1">
@@ -319,7 +319,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
             </section>
           </div>
 
-          <SheetFooter>
+          <SheetFooter className="mt-auto p-4 pt-0">
             <div className="flex items-center gap-2 w-full">
               <Button variant="outline" onClick={onCancel} disabled={isSaving}>
                 Cancel
