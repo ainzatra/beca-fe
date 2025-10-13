@@ -33,7 +33,7 @@ export default function AnalyticsHeader({
           value={selectedCampaign}
           onValueChange={(v) => setSelectedCampaign(v)}
         >
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="">
             <SelectValue placeholder="All Campaigns" />
           </SelectTrigger>
           <SelectContent>
@@ -45,9 +45,9 @@ export default function AnalyticsHeader({
           </SelectContent>
         </Select>
 
-        <Button variant="default" size="sm" onClick={onExport}>
+        {/* <Button variant="default" size="sm" onClick={onExport}>
           Export
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
