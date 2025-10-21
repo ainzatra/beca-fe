@@ -40,6 +40,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [confirmAdvanceOpen, setConfirmAdvanceOpen] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
+  const [confirmCompleteOpen, setConfirmCompleteOpen] = useState(false);
   const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -90,6 +91,11 @@ export default function CampaignManagementSheet({ campaign }: Props) {
     setConfirmAdvanceOpen(false);
   }
 
+  function completeCampaign() {
+    setEditStatus('COMPLETED');
+    setConfirmCompleteOpen(false);
+  }
+
   async function onSave() {
     if (!editTitle.trim()) {
       toast.error('Title is required.', {
@@ -130,6 +136,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
       });
       setOpen(false);
       setConfirmSaveOpen(false);
+      setConfirmCompleteOpen(false);
     } finally {
       setIsSaving(false);
     }
@@ -147,6 +154,7 @@ export default function CampaignManagementSheet({ campaign }: Props) {
     setCurrentPhaseIndex(
       checkPhasesCompleted(campaign.activePhase, campaign.status),
     );
+    setConfirmCompleteOpen(false);
     setOpen(false);
   }
 
@@ -216,7 +224,6 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                 >
                   <option value={'DRAFT'}>Draft</option>
                   <option value={'ACTIVE'}>Active</option>
-                  <option value={'COMPLETED'}>Completed</option>
                 </select>
               </div>
             </div>
@@ -274,46 +281,88 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                   {derivedPhases[currentPhaseIndex].name}
                 </div>
                 <div className="ml-auto text-sm">
-                  <AlertDialog
-                    open={confirmAdvanceOpen}
-                    onOpenChange={setConfirmAdvanceOpen}
-                  >
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        disabled={
-                          !currentPhaseMeetsRequirements() ||
-                          currentPhaseIndex >= derivedPhases.length - 1 ||
-                          isSaving
-                        }
-                      >
-                        Advance to Next Phase
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Confirm Phase Advancement
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Advancing to the next phase is irreversible. Are you
-                          sure you want to continue?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={advancePhase}>
-                          Confirm
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  {phases[currentPhaseIndex] === 'POST' ? (
+                    <AlertDialog
+                      open={confirmCompleteOpen}
+                      onOpenChange={setConfirmCompleteOpen}
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          disabled={
+                            !currentPhaseMeetsRequirements() ||
+                            isSaving ||
+                            editStatus === 'COMPLETED'
+                          }
+                        >
+                          Complete Campaign
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Confirm Campaign Completion
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Completing the campaign will mark it as finished but
+                            keep the POST phase active for AI analysis. This
+                            action is irreversible. Are you sure you want to
+                            continue?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={completeCampaign}>
+                            Confirm
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ) : (
+                    <AlertDialog
+                      open={confirmAdvanceOpen}
+                      onOpenChange={setConfirmAdvanceOpen}
+                    >
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          disabled={
+                            !currentPhaseMeetsRequirements() ||
+                            currentPhaseIndex >= derivedPhases.length - 1 ||
+                            isSaving
+                          }
+                        >
+                          Advance to Next Phase
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Confirm Phase Advancement
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Advancing to the next phase is irreversible. Are you
+                            sure you want to continue?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={advancePhase}>
+                            Confirm
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
                 </div>
               </div>
               {!currentPhaseMeetsRequirements() && (
                 <div className="text-xs text-destructive mt-1">
-                  Current phase requirements not met — cannot advance.
+                  {phases[currentPhaseIndex] === 'POST'
+                    ? 'POST phase must have at least 1 response to complete the campaign.'
+                    : 'Current phase requirements not met — cannot advance.'}
                 </div>
               )}
             </section>
