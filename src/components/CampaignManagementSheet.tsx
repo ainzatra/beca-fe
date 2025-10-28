@@ -37,6 +37,10 @@ export default function CampaignManagementSheet({ campaign }: Props) {
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editStatus, setEditStatus] = useState<CampaignStatus>('ACTIVE');
+  const [editCandidateName, setEditCandidateName] = useState('');
+  const [editCandidatePosition, setEditCandidatePosition] = useState('');
+  const [editCandidateParty, setEditCandidateParty] = useState('');
+  const [editFbUrl, setEditFbUrl] = useState('');
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [confirmAdvanceOpen, setConfirmAdvanceOpen] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
@@ -54,6 +58,10 @@ export default function CampaignManagementSheet({ campaign }: Props) {
     setEditTitle(campaign.title);
     setEditDescription(campaign.description ?? '');
     setEditStatus(campaign.status);
+    setEditCandidateName(campaign.candidateName ?? '');
+    setEditCandidatePosition(campaign.candidatePosition ?? '');
+    setEditCandidateParty(campaign.candidateParty ?? '');
+    setEditFbUrl(campaign.fbUrl ?? '');
     setCurrentPhaseIndex(phaseCompleted);
   }, [campaign]);
 
@@ -111,6 +119,10 @@ export default function CampaignManagementSheet({ campaign }: Props) {
       title: editTitle,
       description: editDescription,
       status: editStatus,
+      candidateName: editCandidateName,
+      candidatePosition: editCandidatePosition,
+      candidateParty: editCandidateParty,
+      fbUrl: editFbUrl,
       activePhase,
     };
 
@@ -151,6 +163,10 @@ export default function CampaignManagementSheet({ campaign }: Props) {
     setEditTitle(campaign.title);
     setEditDescription(campaign.description ?? '');
     setEditStatus(campaign.status);
+    setEditCandidateName(campaign.candidateName ?? '');
+    setEditCandidatePosition(campaign.candidatePosition ?? '');
+    setEditCandidateParty(campaign.candidateParty ?? '');
+    setEditFbUrl(campaign.fbUrl ?? '');
     setCurrentPhaseIndex(
       checkPhasesCompleted(campaign.activePhase, campaign.status),
     );
@@ -206,6 +222,67 @@ export default function CampaignManagementSheet({ campaign }: Props) {
                   className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-ring/50 focus-visible:border-ring"
                   rows={4}
                   placeholder="Brief description"
+                  disabled={isSaving}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Candidate Name</label>
+              <div className="mt-1">
+                <Input
+                  value={editCandidateName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEditCandidateName(e.target.value)
+                  }
+                  placeholder="Candidate name"
+                  disabled={isSaving}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Candidate Position</label>
+              <div className="mt-1">
+                <select
+                  value={editCandidatePosition}
+                  onChange={(e) => setEditCandidatePosition(e.target.value)}
+                  className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-ring/50 focus-visible:border-ring w-full"
+                  disabled={isSaving}
+                >
+                  <option value="" disabled>
+                    Select position
+                  </option>
+                  <option value="mayor">Mayor</option>
+                  <option value="vice mayor">Vice Mayor</option>
+                  <option value="sangguniang bayan">Sangguniang Bayan</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Candidate Party</label>
+              <div className="mt-1">
+                <Input
+                  value={editCandidateParty}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEditCandidateParty(e.target.value)
+                  }
+                  placeholder="Candidate party"
+                  disabled={isSaving}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Facebook URL</label>
+              <div className="mt-1">
+                <Input
+                  value={editFbUrl}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEditFbUrl(e.target.value)
+                  }
+                  placeholder="Facebook URL"
                   disabled={isSaving}
                 />
               </div>
