@@ -100,7 +100,7 @@ function VotesPerLocationChart({ votes }: VotesPerLocationChartProps) {
             <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="h-64">
               <SelectItem value="all">All Locations</SelectItem>
               {locations.map((location) => (
                 <SelectItem key={location} value={location}>

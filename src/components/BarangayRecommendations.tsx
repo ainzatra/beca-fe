@@ -105,7 +105,7 @@ export default function BarangayRecommendations({
             <SelectTrigger>
               <SelectValue placeholder="Choose a barangay" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="h-64">
               {barangayOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   <div className="flex items-center gap-2">
