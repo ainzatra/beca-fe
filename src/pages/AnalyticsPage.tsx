@@ -4,7 +4,7 @@ import AnalyticsHeader from '@/components/AnalyticsHeader';
 import AnalyticsStats from '@/components/AnalyticsStats';
 import SummaryPanel from '@/components/SummaryPanel';
 import SentimentTrend from '@/components/SentimentTrend';
-import SentimentBreakdown from '@/components/SentimentBreakdown';
+import BarangayRecommendations from '@/components/BarangayRecommendations';
 import IssuesTable, { type Issue } from '@/components/IssuesTable';
 import LocationSentimentChart, {
   type LocationSentimentDatum,
@@ -28,6 +28,15 @@ type AnalyticsData = {
     confidence: number;
     topIssues: Issue[];
     locationSentiment: LocationSentimentDatum[];
+    recommendations?: Array<{
+      barangay: string;
+      recommendation: string;
+      priority: 'HIGH' | 'MEDIUM' | 'LOW';
+      sentimentScore: number;
+      historicalPerformance: string;
+      keyIssues: string[];
+      responseCount: number;
+    }>;
   };
 };
 
@@ -177,7 +186,7 @@ export default function AnalyticsPage() {
             config={chartConfig}
           />
           <SentimentTrend data={analyticsArray} />
-          <SentimentBreakdown data={currentAnalytics} />
+          <BarangayRecommendations data={currentAnalytics} />
         </div>
 
         <IssuesTable issues={currentAnalytics.report.topIssues || []} />
