@@ -8,17 +8,17 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanstackDevtools } from '@tanstack/react-devtools';
+import { Toaster } from 'sonner';
+import { useEffect } from 'react';
 
 import Header from '../components/Header';
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
 import type { QueryClient } from '@tanstack/react-query';
-import { Toaster } from 'sonner';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { useUserStore } from '@/stores/useUserStore';
-import { useEffect } from 'react';
 
 interface MyRouterContext {
   queryClient: QueryClient;
