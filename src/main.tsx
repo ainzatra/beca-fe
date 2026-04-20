@@ -1,6 +1,10 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import {
+  RouterProvider,
+  createRouter,
+  useRouterState,
+} from '@tanstack/react-router';
 
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx';
 
@@ -11,9 +15,9 @@ import './styles.css';
 import reportWebVitals from './reportWebVitals.ts';
 
 // Import the user store for rehydration
-import { useUserStore } from '@/stores/useUserStore';
 import { api } from './utils/utils.ts';
 import NotFoundPage from './pages/NotFoundPage.tsx';
+import { useUserStore } from '@/stores/useUserStore';
 
 // Create a new router instance
 
@@ -65,8 +69,21 @@ async function checkAuth() {
   const token = localStorage.getItem('beca_token');
   const user = useUserStore.getState().user;
 
+  // Get current pathname from window.location since we can't use hooks outside components
+  const currentPath = window.location.pathname;
+
   // If neither token nor user is present, navigate to the root route
   if (!token && !user) {
+    // Exclude public survey paths using the same pattern as in __root.tsx
+    // This excludes: /, /login, /404, /forgot-password, /survey/:id
+    if (
+      /^\/($|login$|404$|forgot-password(\/.*)?$|survey\/[^/]+$)/.test(
+        currentPath,
+      )
+    ) {
+      return;
+    }
+
     // use the router instance directly (can't use hooks outside components)
     router.navigate({ to: '/' });
   }
