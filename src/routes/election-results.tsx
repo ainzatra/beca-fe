@@ -24,7 +24,7 @@ export const Route = createFileRoute('/election-results')({
 
 function RouteComponent() {
   return (
-    <div className="">
+    <div className="p-6">
       <Header />
       <ElectionResultsPage />
     </div>

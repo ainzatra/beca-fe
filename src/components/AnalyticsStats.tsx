@@ -17,21 +17,21 @@ export default function AnalyticsStats({ data }) {
         value={report.totalResponses}
         title="Total Responses"
         subtitle={<div className="text-xs">Across selected campaign</div>}
-        className="bg-gradient-to-br from-blue-700 to-emerald-500"
+        accentColor="blue"
       />
 
       <StatCard
         value={report.positive}
         title="Positive Sentiment"
         subtitle={<div className="text-xs">Based on AI sentiment</div>}
-        className="bg-gradient-to-br from-emerald-600 to-emerald-400"
+        accentColor="emerald"
       />
 
       <StatCard
         value={report.negative}
         title="Negative Sentiment"
         subtitle={<div className="text-xs">Issues & concerns</div>}
-        className="bg-gradient-to-br from-red-600 to-rose-500"
+        accentColor="red"
       />
     </div>
   );

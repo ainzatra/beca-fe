@@ -120,7 +120,7 @@ function RouteComponent() {
   });
 
   return (
-    <div>
+    <div className="p-6">
       <Header />
       <div className="rounded-lg bg-white p-6 shadow space-y-4">
         <div className="flex flex-col md:flex-row gap-3 md:items-end">

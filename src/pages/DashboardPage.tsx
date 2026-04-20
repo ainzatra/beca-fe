@@ -130,21 +130,21 @@ export function DashboardPage() {
           value={stats?.campaignCount.total}
           title="Total Campaigns"
           subtitle={<div className="text-xs">Active, draft and completed</div>}
-          className="bg-gradient-to-br from-indigo-600 to-sky-500"
+          accentColor="blue"
         />
 
         <StatCard
           value={stats?.responseCount}
           title="Total Responses"
           subtitle={<div className="text-xs">Across all campaigns</div>}
-          className="bg-gradient-to-br from-blue-700 to-emerald-500"
+          accentColor="violet"
         />
 
         <StatCard
           value={stats?.surveyorCount}
           title="Active Surveyors"
           subtitle={<div className="text-xs">Field enumerators online</div>}
-          className="bg-gradient-to-br from-emerald-600 to-emerald-400"
+          accentColor="emerald"
         />
       </div>
 
@@ -194,20 +194,14 @@ export function DashboardPage() {
                 <ProgressCard
                   title="Pre-Campaign"
                   count={stats?.campaignCount.PRE}
-                  from="#10b981"
-                  to="#059669"
                 />
                 <ProgressCard
                   title="Mid-Campaign"
                   count={stats?.campaignCount.MID}
-                  from="#fb923c"
-                  to="#f97316"
                 />
                 <ProgressCard
                   title="Post-Campaign"
                   count={stats?.campaignCount.POST}
-                  from="#8b5cf6"
-                  to="#6d28d9"
                 />
               </div>
             </div>

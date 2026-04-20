@@ -24,7 +24,7 @@ export const Route = createFileRoute('/users')({
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="p-6">
       <Header />
       <UsersPage />
     </div>

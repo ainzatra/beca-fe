@@ -8,7 +8,6 @@ export default function PrescriptivePanel() {
   const [showModal, setShowModal] = React.useState(false);
 
   const handleRun = () => {
-    // For now run analysis for all campaigns (mock). Later pass campaignId/dateRange.
     runAnalysis();
   };
 
@@ -18,10 +17,10 @@ export default function PrescriptivePanel() {
 
   return (
     <>
-      <div className="w-full bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 rounded-xl p-6 text-white shadow-lg">
+      <div className="w-full bg-primary rounded-xl p-6 text-white shadow-lg border-l-4 border-l-violet-500">
         <div className="flex flex-col md:flex-row items-start justify-between gap-4">
           <div className="flex-1">
-            <h3 className="text-lg font-bold">🔮 Prescriptive Analysis</h3>
+            <h3 className="text-lg font-bold">Prescriptive Analysis</h3>
             <p className="text-sm mt-1 text-white/90">
               Actionable recommendations generated from current analytics.
             </p>
@@ -52,7 +51,7 @@ export default function PrescriptivePanel() {
             <div className="mt-4 text-xs text-white/80">
               Data: survey responses + sentiment & issue analysis
             </div>
-            <div className="mt-2 text-sm text-emerald-200">
+            <div className="mt-2 text-sm text-emerald-300">
               ● Real-time data active
             </div>
           </div>
@@ -60,16 +59,16 @@ export default function PrescriptivePanel() {
           <div className="flex flex-row md:flex-col flex-wrap gap-3">
             <Button
               variant="default"
-              className="bg-gradient-to-r from-indigo-700 to-emerald-500 text-white"
+              className="bg-violet-600 text-white hover:bg-violet-700"
               onClick={handleRun}
               disabled={loading}
             >
-              {loading ? 'Running…' : '🔮 RUN PRESCRIPTIVE ANALYSIS'}
+              {loading ? 'Running…' : 'RUN PRESCRIPTIVE ANALYSIS'}
             </Button>
 
             <Button
               variant="outline"
-              className="bg-white/10 border-white/20 text-white"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               onClick={() => {
                 clear();
               }}
@@ -79,7 +78,7 @@ export default function PrescriptivePanel() {
 
             <Button
               variant="secondary"
-              className="bg-emerald-500 text-white"
+              className="bg-emerald-500 text-white hover:bg-emerald-600"
               onClick={() => setShowModal(true)}
               disabled={!data}
             >

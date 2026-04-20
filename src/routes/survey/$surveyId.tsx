@@ -114,7 +114,7 @@ function RouteComponent() {
 
   if (loading) {
     return (
-      <div>
+      <div className="p-6">
         {/* <Header /> */}
         <main className="max-w-4xl mx-auto p-6">
           <Card>
@@ -136,7 +136,7 @@ function RouteComponent() {
 
   if (error) {
     return (
-      <div>
+      <div className="p-6">
         {/* <Header /> */}
         <main className="max-w-4xl mx-auto p-6">
           <Card>
@@ -162,7 +162,7 @@ function RouteComponent() {
 
   if (submitted) {
     return (
-      <div>
+      <div className="p-6">
         {/* <Header /> */}
         <main className="max-w-4xl mx-auto p-6">
           <Card>
@@ -275,7 +275,7 @@ function RouteComponent() {
   };
 
   return (
-    <div>
+    <div className="p-6">
       {/* <Header /> */}
       <main className="max-w-4xl mx-auto p-6 flex gap-8">
         <section className="flex-1">

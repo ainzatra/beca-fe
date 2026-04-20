@@ -94,7 +94,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="px-4 py-6">
       <SidebarHeader>
-        <div className="bg-gradient-to-r from-white to-slate-50 rounded-md p-3 shadow-inner">
+        <div className="bg-white rounded-md p-3 shadow-inner border border-border">
           <div className="text-sm font-semibold">{user?.name}</div>
           <div className="text-xs text-muted-foreground">
             {user?.role?.toUpperCase()}

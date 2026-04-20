@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { api, cn } from '@/utils/utils';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import images from '@/constants/images';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useUserStore, type User } from '@/stores/useUserStore';
+import { useUserStore } from '@/stores/useUserStore';
 import { toast } from 'sonner';
 
 interface LoginFormProps {
@@ -18,6 +16,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const { setUser } = useUserStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -28,6 +27,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const response = await api('/auth/login', false, {
         method: 'POST',
@@ -36,7 +37,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
       const result = await response.json();
       if (!response.ok) {
-        console.log({ result });
         toast.error(result.message || 'Login failed. Please try again.');
         return;
       }
@@ -46,65 +46,66 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       toast.success('Login successful!', {
         style: { backgroundColor: 'limegreen', color: 'white' },
       });
-      // Navigate to dashboard
       navigate({ to: '/dashboard' });
     } catch (error) {
       toast.error('Login failed. Please try again.');
-      return;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-1">
-          <form onSubmit={handleSubmit} className="p-6 md:p-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <img
-                  src={images.logo}
-                  alt="logo"
-                  className="w-[240px] h-[240px]"
-                />
-                <p className="text-muted-foreground text-balance">
-                  Login to your account
-                </p>
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <Link
-                  to="/forgot-password"
-                  className="text-center text-sm underline-offset-2 hover:underline"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-              <Button type="submit" className="w-full cursor-pointer">
-                Login
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className={cn('space-y-8', className)} {...props}>
+      <div className="space-y-2">
+        <h2 className="text-3xl font-bold tracking-tight">Sign in</h2>
+        <p className="text-muted-foreground">
+          Enter your credentials to access your account
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="Enter your username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isLoading}
+              className="h-11"
+            />
+          </div>
+
+          <div className="space-y-2">
+            {/* <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:underline underline-offset-4"
+              >
+                Forgot password?
+              </Link>
+            </div> */}
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              className="h-11"
+            />
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full h-11" disabled={isLoading}>
+          {isLoading ? 'Signing in...' : 'Sign in'}
+        </Button>
+      </form>
     </div>
   );
 }

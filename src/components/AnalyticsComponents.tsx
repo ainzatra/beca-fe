@@ -124,23 +124,23 @@ export function AnalyticsStats({ data }: { data: AnalyticsData }) {
     <div className="grid grid-cols-3 gap-4">
       <StatCard
         value={data.totalResponses}
-        title="Total Responses123"
+        title="Total Responses"
         subtitle={<div className="text-xs">Across selected campaign</div>}
-        className="bg-gradient-to-br from-red-700 to-emerald-500"
+        accentColor="blue"
       />
 
       <StatCard
         value={data.positive}
         title="Positive Sentiment"
         subtitle={<div className="text-xs">Based on AI sentiment</div>}
-        className="bg-gradient-to-br from-emerald-600 to-emerald-400"
+        accentColor="emerald"
       />
 
       <StatCard
         value={data.negative}
         title="Negative Sentiment"
         subtitle={<div className="text-xs">Issues & concerns</div>}
-        className="bg-gradient-to-br from-red-600 to-rose-500"
+        accentColor="red"
       />
     </div>
   );

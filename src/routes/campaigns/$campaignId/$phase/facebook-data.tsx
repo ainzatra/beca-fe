@@ -10,7 +10,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="p-6">
       <Header />
       <FacebookDataPage />
     </div>

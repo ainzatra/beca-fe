@@ -45,7 +45,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
               <AppSidebar />
             </>
           )}
-          <div className="bg-gradient-to-r from-blue-700 to-teal-700 w-full p-6">
+          <div className="bg-primary w-full">
             <Outlet />
           </div>
         </SidebarProvider>

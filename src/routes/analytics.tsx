@@ -24,7 +24,7 @@ export const Route = createFileRoute('/analytics')({
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="p-6">
       <Header />
       <AnalyticsPage />
     </div>

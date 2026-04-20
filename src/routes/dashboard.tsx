@@ -20,7 +20,7 @@ export const Route = createFileRoute('/dashboard')({
 
 function RouteComponent() {
   return (
-    <div className="">
+    <div className="p-6">
       <Header />
       <DashboardPage />
     </div>

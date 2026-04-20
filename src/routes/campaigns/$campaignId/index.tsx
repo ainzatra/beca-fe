@@ -24,7 +24,7 @@ function RouteComponent() {
     },
   });
   return (
-    <div className="">
+    <div className="p-6">
       <Header />
       <CampaignDetailPage
         campaign={campaign}

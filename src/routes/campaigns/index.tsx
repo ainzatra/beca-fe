@@ -11,7 +11,7 @@ function RouteComponent() {
   // use tanstack query isntead after creating backend
 
   return (
-    <div>
+    <div className="p-6">
       <Header />
       <CampaignsPage />
     </div>

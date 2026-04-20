@@ -68,7 +68,7 @@ export default function CampaignCard({ campaign }: { campaign: Campaign }) {
 
             <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600"
+                className="h-full bg-emerald-500"
                 style={{ width: `${percent}%` }}
                 aria-hidden
               />
